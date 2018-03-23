@@ -326,19 +326,15 @@ namespace ACFramework
         // add more models here that you need in numerical order
         // then add to the array below in the same order
 
-        public static readonly int Squidge = 0;
-        public static readonly int Robot = 1;
-        public static readonly int Link = 2;
-        public static readonly int Knight = 3;
-        public static readonly int CitrusFrog = 4;
+        public static readonly int Goku = 0;
+        public static readonly int Vegeta = 1;
+        public static readonly int Wank = 2;
 
         // at least one must be set true
         private static readonly ModelsMD2Info[] minfo = {
-            new ModelsMD2Info( "Squidge", "squidge.pcx", 0.0f, true ),
-            new ModelsMD2Info( "robot", "robot.pcx", 0.2f, true ),
-            new ModelsMD2Info( "link", "soft_link.pcx", 0.1f, true ),
-            new ModelsMD2Info( "pknight", "ctf_b.pcx", 0.15f, true ),
-            new ModelsMD2Info( "citrusfrog", "BigRed.pcx", 0.3f, true )
+            new ModelsMD2Info( "goku", "goku.pcx", 0.0f, false ),
+            new ModelsMD2Info( "vegeta", "vegeta.pcx", 0.2f, true ),
+            new ModelsMD2Info( "wank", "black.pcx", 0.1f, true )
         };            
 
         private static int[] randomCritters;

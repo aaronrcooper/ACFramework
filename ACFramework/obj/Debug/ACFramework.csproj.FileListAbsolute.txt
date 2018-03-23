@@ -91,3 +91,5 @@ C:\Users\jchilds\Desktop\ACFramework Version 2.03\ACFramework\bin\Debug\ACFramew
 C:\Users\jchilds\Desktop\ACFramework Version 2.03\ACFramework\obj\Debug\ACFramework.exe
 C:\Users\jchilds\Desktop\ACFramework Version 2.03\ACFramework\obj\Debug\ACFramework.pdb
 C:\Users\jchilds\Desktop\ACFramework Version 2.03\ACFramework\obj\Debug\ACFramework.csprojResolveAssemblyReference.cache
+C:\Users\s_arcooper\Documents\GitHub\ACFramework\ACFramework\obj\Debug\ACFramework.exe
+C:\Users\s_arcooper\Documents\GitHub\ACFramework\ACFramework\obj\Debug\ACFramework.pdb

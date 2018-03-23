@@ -251,6 +251,11 @@ namespace ACFramework
         }
 	} 
 	
+    class cCritter3DBoss :cCritter3Dcharacter
+    {
+
+    }
+
 	class cCritterTreasure : cCritter 
 	{   // Try jumping through this hoop
 		

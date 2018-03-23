@@ -252,7 +252,15 @@ namespace ACFramework
 	
     class cCritter3DBoss :cCritter3Dcharacter
     {
-
+        public cCritter3DBoss(cGame pownergame) :
+            base (pownergame)
+        {
+            if (pownergame!=null)
+            {
+                //Sets the boss sprite
+                Sprite = new cSpriteQuake(ModelsMD2.Vegeta);
+            }
+        }
     }
 
 	class cCritterTreasure : cCritter 

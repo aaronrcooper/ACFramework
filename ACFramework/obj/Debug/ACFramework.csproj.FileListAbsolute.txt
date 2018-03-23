@@ -91,5 +91,17 @@ C:\Users\jchilds\Desktop\ACFramework Version 2.03\ACFramework\bin\Debug\ACFramew
 C:\Users\jchilds\Desktop\ACFramework Version 2.03\ACFramework\obj\Debug\ACFramework.exe
 C:\Users\jchilds\Desktop\ACFramework Version 2.03\ACFramework\obj\Debug\ACFramework.pdb
 C:\Users\jchilds\Desktop\ACFramework Version 2.03\ACFramework\obj\Debug\ACFramework.csprojResolveAssemblyReference.cache
+<<<<<<< HEAD
 C:\Users\s_arcooper\Documents\GitHub\ACFramework\ACFramework\obj\Debug\ACFramework.exe
 C:\Users\s_arcooper\Documents\GitHub\ACFramework\ACFramework\obj\Debug\ACFramework.pdb
+=======
+C:\Users\s_ctfrye\Documents\GitHub\ACFramework\ACFramework\bin\Debug\ACFramework.exe
+C:\Users\s_ctfrye\Documents\GitHub\ACFramework\ACFramework\bin\Debug\ACFramework.pdb
+C:\Users\s_ctfrye\Documents\GitHub\ACFramework\ACFramework\bin\Debug\OpenTK.dll.config
+C:\Users\s_ctfrye\Documents\GitHub\ACFramework\ACFramework\obj\Debug\ACFramework.csprojResolveAssemblyReference.cache
+C:\Users\s_ctfrye\Documents\GitHub\ACFramework\ACFramework\obj\Debug\ACFramework.Properties.Resources.resources
+C:\Users\s_ctfrye\Documents\GitHub\ACFramework\ACFramework\obj\Debug\ACFramework.csproj.GenerateResource.Cache
+C:\Users\s_ctfrye\Documents\GitHub\ACFramework\ACFramework\obj\Debug\ACFramework.csproj.CoreCompileInputs.cache
+C:\Users\s_ctfrye\Documents\GitHub\ACFramework\ACFramework\obj\Debug\ACFramework.exe
+C:\Users\s_ctfrye\Documents\GitHub\ACFramework\ACFramework\obj\Debug\ACFramework.pdb
+>>>>>>> origin/Graphics

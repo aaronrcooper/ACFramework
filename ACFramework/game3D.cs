@@ -50,8 +50,7 @@ namespace ACFramework
             : base( pownergame ) 
 		{ 
 			BulletClass = new cCritter3DPlayerBullet( ); 
-            Sprite = new cSpriteSphere(); 
-			Sprite.FillColor = Color.DarkGreen; 
+            Sprite = new cSpriteQuake(ModelsMD2.Goku); 
 			Sprite.SpriteAttitude = cMatrix3.scale( 2, 0.8f, 0.4f ); 
 			setRadius( cGame3D.PLAYERRADIUS ); //Default cCritter.PLAYERRADIUS is 0.4.  
 			setHealth( 10 ); 

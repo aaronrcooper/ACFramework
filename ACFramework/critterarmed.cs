@@ -877,7 +877,8 @@ namespace ACFramework
 		}
 
 
-	} 
+	}
+
 	
 	class cCritterArmedPlayer : cCritterArmed 
 	{ 

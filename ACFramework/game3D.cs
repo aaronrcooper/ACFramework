@@ -51,6 +51,7 @@ namespace ACFramework
 		{ 
 			BulletClass = new cCritter3DPlayerBullet( ); 
             Sprite = new cSpriteQuake(ModelsMD2.Goku); 
+			//Sprite.FillColor = Color.DarkGreen; 
 			Sprite.SpriteAttitude = cMatrix3.scale( 2, 0.8f, 0.4f ); 
 			setRadius( cGame3D.PLAYERRADIUS ); //Default cCritter.PLAYERRADIUS is 0.4.  
 			setHealth( 10 ); 
@@ -252,6 +253,33 @@ namespace ACFramework
 	
     class cCritter3DBoss :cCritter3Dcharacter
     {
+        private int BossHealth;
+  //      public cCritter3DPlayer(cGame pownergame) 
+  //          : base( pownergame ) 
+		//{
+  //          BulletClass = new cCritter3DPlayerBullet();
+  //          Sprite = new cSpriteQuake(ModelsMD2.Goku);
+  //          //Sprite.FillColor = Color.DarkGreen; 
+  //          Sprite.SpriteAttitude = cMatrix3.scale(2, 0.8f, 0.4f);
+  //          setRadius(cGame3D.PLAYERRADIUS); //Default cCritter.PLAYERRADIUS is 0.4.  
+  //          setHealth(10);
+  //          moveTo(_movebox.LoCorner.add(new cVector3(0.0f, 0.0f, 2.0f)));
+  //          WrapFlag = cCritter.CLAMP; //Use CLAMP so you stop dead at edges.
+  //          Armed = true; //Let's use bullets.
+  //          MaxSpeed = cGame3D.MAXPLAYERSPEED;
+  //          AbsorberFlag = true; //Keeps player from being buffeted about.
+  //          ListenerAcceleration = 160.0f; //So Hopper can overcome gravity.  Only affects hop.
+
+  //          // YHopper hop strength 12.0
+  //          Listener = new cListenerScooterYHopper(0.2f, 12.0f);
+  //          // the two arguments are walkspeed and hop strength -- JC
+
+  //          addForce(new cForceGravity(50.0f)); /* Uses  gravity. Default strength is 25.0.
+		//	Gravity	will affect player using cListenerHopper. */
+  //          AttitudeToMotionLock = false; //It looks nicer is you don't turn the player with motion.
+  //          Attitude = new cMatrix3(new cVector3(0.0f, 0.0f, -1.0f), new cVector3(-1.0f, 0.0f, 0.0f),
+  //              new cVector3(0.0f, 1.0f, 0.0f), Position);
+  //      }
         public cCritter3DBoss(cGame pownergame) :
             base (pownergame)
         {
@@ -259,7 +287,23 @@ namespace ACFramework
             {
                 //Sets the boss sprite
                 Sprite = new cSpriteQuake(ModelsMD2.Vegeta);
+                setHealth(20);
+                WrapFlag = cCritter.CLAMP;  //Prevents boss from going through walls
+                Armed = true;
             }
+        }
+
+        public override bool collide(cCritter pCritter)
+        {
+            if (contains(pCritter)) //disk of pcritter is wholly inside my disk 
+            {
+                pCritter.addHealth(-1);
+                pCritter.moveTo(new cVector3(_movebox.Midx, _movebox.Loy + 1.0f,
+                    _movebox.Hiz - 3.0f));
+                return true;
+            }
+            else
+                return false;
         }
     }
 

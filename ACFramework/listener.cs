@@ -437,6 +437,129 @@ namespace ACFramework
 
     }
 
+    class cListenerQuakeScooterYHopper:cListenerScooterYHopper
+    {
+        public cListenerQuakeScooterYHopper(float hopuptime, float hopagainwait) : base(hopuptime, hopagainwait)
+        {
+
+        }
+
+        public override void listen (float dt, cCritter pcritter)
+        {
+            cKeyInfo pcontroller = Framework.Keydev;
+            /* Note that since I set the velocity to 0.0 when I'm not
+            pressing an arrow key, this means that acceraltion forces don't get
+            to have accumulating effects on a critter with a cListenerScooter listener. So rather
+            than having some very half-way kinds of acceleration effects, I go aheand and
+            set acceleration to 0.0 in here. */
+            //	pcritter->setAcceleration(cVector(0.0, pcritter->acceleration().y(), 0.0));	 
+            float yvelocity = pcritter.Velocity.Y; /* Save this and restore it before we leave
+			this call, so that gravity can act in the y direction. */
+            //Translate 
+            /* I want to move the critter position. But I don't
+            just use a moveTo because I want to have a correct _velocity inside the 
+            critter so I can use it to hit things and bounce and so on.  So I change
+            the velocity.*/
+            bool inreverse = false; //Only set TRUE if currently pressing VK_DOWN 
+            bool left = Framework.Keydev[vk.Left];
+            bool right = Framework.Keydev[vk.Right];
+            bool up = Framework.Keydev[vk.Up];
+            bool down = Framework.Keydev[vk.Down];
+            bool pageup = Framework.Keydev[vk.PageUp];
+            bool pagedown = Framework.Keydev[vk.PageDown];
+            if (!_hopping && up)
+            {
+                pcritter.Sprite.ModelState = State.Run;
+                pcritter.Velocity = pcritter.AttitudeTangent.mult(pcritter.MaxSpeed / 10);
+            }
+            if (!_hopping && down)
+            {
+                pcritter.Sprite.ModelState = State.Run;
+                pcritter.Velocity = pcritter.AttitudeTangent.mult(-pcritter.MaxSpeed / 10);
+                inreverse = true;
+            }
+            if (!up && !down)
+            {
+                pcritter.Sprite.ModelState = State.Idle;
+                pcritter.Velocity = new cVector3(0.0f, 0.0f, 0.0f);
+            }
+
+            //Now restore the y velocity.
+            pcritter.Velocity = new cVector3(pcritter.Velocity.X, yvelocity, pcritter.Velocity.Z);
+            //	Real inreversesign = inreverse?-1.0:1.0; 
+
+            if (!_hopping && !left && !right && !pagedown && !pageup)
+                return;
+            /* If you get here, you've pressed an arrow key or a hop key. */
+            if (!_hopping && (left || right))
+            {
+                /* To rotate, Do three things.
+            (a) Match the motion vectors to the visible attitude.
+            (b) Rotate the motion vectors withe the arrow keys.
+            (c) Match the attitude to the altered motion vectors. */
+                //(a) Match the motion matrix to the attitude.
+                pcritter.copyAttitudeMatrixToMotionMatrix(); //Changes _velocity 
+                if (inreverse) //Keep the tangent and atttitudeTangent in opposite directions.
+                    pcritter.yaw((float)Math.PI); //This puts _velocity back in the correct direction.
+                //(b) Alter the motion matrix.
+                if (left)
+                    pcritter.yaw(dt * turnspeed(pcontroller.keystateage(vk.Left)));
+                if (right)
+                    pcritter.yaw(-dt * turnspeed(pcontroller.keystateage(vk.Right)));
+                //(c) Match the attitude to the motion matrix.
+                pcritter.copyMotionMatrixToAttitudeMatrix();
+                if (inreverse) //Keep the tangent and atttitudeTangent in opposite directions.
+                    pcritter.rotateAttitude((float)-Math.PI);
+                pcritter.Velocity = //Restore y velocity in case you changed it again.
+                    new cVector3(pcritter.Velocity.X, yvelocity, pcritter.Velocity.Z);
+            }
+            //Hopping code 
+            // I've rewritten this code so the player can't hop again in midair --  
+            // unless forces other than gravity act on it in midair -- oh, well, it's  
+            // still not perfect -- JC 
+            bool hopkeypressed = pageup;
+
+            if (hopkeypressed && !_hopping)
+            {
+                //Pulse upwards 
+                saveMaxSpeed = pcritter.MaxSpeed;
+                pcritter.MaxSpeed = cGame3D.MAXPLAYERSPEED;
+                pcritter.addAcceleration(new cVector3(0.0f, _hopstrength * pcritter.ListenerAcceleration, 0.0f));
+                _hopping = true;
+                _falling = false;
+                _lastSpeed = pcritter.MaxSpeed;
+            }
+            else
+            {
+                if (_hopping && _lastSpeed < pcritter.Speed)
+                {
+                    _falling = true;
+                }
+                else if (_hopping && _falling)
+                {
+                    _hopping = false; // player has landed  
+                    _falling = false;
+                    pcritter.MaxSpeed = saveMaxSpeed;
+                }
+                _lastSpeed = pcritter.Speed;
+            }
+        }
+
+        public override bool IsKindOf(string str)
+        {
+            return str == "cListenerQuakeScooterYHopper" || base.IsKindOf(str);
+        }
+
+        public override string RuntimeClass
+        {
+            get
+            {
+                return "cListenerQuakeScooterYHopper";
+            }
+        }
+    }
+
+
     class cListenerScooter : cListener /* cListenerScooter works well in 2D and in 3D. */
     {
 

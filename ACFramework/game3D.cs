@@ -52,7 +52,7 @@ namespace ACFramework
 			BulletClass = new cCritter3DPlayerBullet( ); 
             Sprite = new cSpriteQuake(ModelsMD2.Goku); 
 			Sprite.SpriteAttitude = cMatrix3.scale( 2, 0.8f, 0.4f ); 
-			setRadius( cGame3D.PLAYERRADIUS ); //Default cCritter.PLAYERRADIUS is 0.4.  
+			setRadius( 0.42f ); //Default cCritter.PLAYERRADIUS is 0.4.  
 			setHealth( 10 ); 
 			moveTo( _movebox.LoCorner.add( new cVector3( 0.0f, 0.0f, 2.0f ))); 
 			WrapFlag = cCritter.CLAMP; //Use CLAMP so you stop dead at edges.
@@ -62,7 +62,7 @@ namespace ACFramework
 			ListenerAcceleration = 160.0f; //So Hopper can overcome gravity.  Only affects hop.
 		
             // YHopper hop strength 12.0
-			Listener = new cListenerScooterYHopper( 0.2f, 12.0f ); 
+			Listener = new cListenerQuakeScooterYHopper( 0.2f, 12.0f ); 
             // the two arguments are walkspeed and hop strength -- JC
             
             addForce( new cForceGravity( 50.0f )); /* Uses  gravity. Default strength is 25.0.
@@ -471,9 +471,9 @@ namespace ACFramework
 			    { 
 				    value.setViewpoint( new cVector3( 0.0f, 0.3f, -1.0f ), _border.Center); 
 					//Always make some setViewpoint call simply to put in a default zoom.
-				    value.zoom( 0.35f ); //Wideangle 
+				    value.zoom( 0.2f ); //Wideangle 
 				    cListenerViewerRide prider = ( cListenerViewerRide )( value.Listener); 
-				    prider.Offset = (new cVector3( -1.5f, 0.0f, 1.0f)); /* This offset is in the coordinate
+				    prider.Offset = (new cVector3( -1.5f, 0.0f, 2.5f)); /* This offset is in the coordinate
 				    system of the player, where the negative X axis is the negative of the
 				    player's tangent direction, which means stand right behind the player. */ 
 			    } 

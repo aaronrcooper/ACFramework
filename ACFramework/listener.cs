@@ -13,7 +13,8 @@ namespace ACFramework
     class cListener
     {
         public static readonly float CRITTERTURNSPEEDSLOW = 0.2f * (float)Math.PI; //Slow Radians per second to turn. Try 0.5*PI 
-        public static readonly float CRITTERTURNSPEEDFAST = 2.0f * (float)Math.PI; //Fast Radians per second to turn. Try 2.0*PI 
+        public static readonly float CRITTERTURNSPEEDFAST = 2.0f * (float)Math.PI; //Fast Radians per second to turn. Try 2.0*PI
+        public static readonly float CRITTERTURNSPEEDNORMAL = 0.7f * (float)Math.PI;
         public static readonly float TURNSPEEDUPWAIT = 0.1f; //Time in secs of turning before you turn faster.
         public static readonly float RIDESTEP = 0.05f;
         public static readonly int MOVEVIEW = 1;
@@ -37,10 +38,11 @@ namespace ACFramework
 
         public float turnspeed(float keydowntime)
         {
-            if (keydowntime < TURNSPEEDUPWAIT)
+            /*if (keydowntime < TURNSPEEDUPWAIT)
                 return CRITTERTURNSPEEDSLOW;
             else
-                return CRITTERTURNSPEEDFAST;
+                return CRITTERTURNSPEEDFAST;*/
+            return CRITTERTURNSPEEDNORMAL;
         }
 
 
@@ -344,6 +346,7 @@ namespace ACFramework
             bool down = Framework.Keydev[vk.Down];
             bool pageup = Framework.Keydev[vk.PageUp];
             bool pagedown = Framework.Keydev[vk.PageDown];
+            bool end = Framework.Keydev[vk.End];
             if (!_hopping && up)
                 pcritter.Velocity = pcritter.AttitudeTangent.mult(pcritter.MaxSpeed);
             if (!_hopping && down)
@@ -465,8 +468,7 @@ namespace ACFramework
             bool right = Framework.Keydev[vk.Right];
             bool up = Framework.Keydev[vk.Up];
             bool down = Framework.Keydev[vk.Down];
-            bool pageup = Framework.Keydev[vk.PageUp];
-            bool pagedown = Framework.Keydev[vk.PageDown];
+            bool ctrl = Framework.Keydev[vk.C];
             if (!_hopping && up)
             {
                 pcritter.Sprite.ModelState = State.Run;
@@ -488,7 +490,7 @@ namespace ACFramework
             pcritter.Velocity = new cVector3(pcritter.Velocity.X, yvelocity, pcritter.Velocity.Z);
             //	Real inreversesign = inreverse?-1.0:1.0; 
 
-            if (!_hopping && !left && !right && !pagedown && !pageup)
+            if (!_hopping && !left && !right && !ctrl && !ctrl)
                 return;
             /* If you get here, you've pressed an arrow key or a hop key. */
             if (!_hopping && (left || right))
@@ -517,7 +519,7 @@ namespace ACFramework
             // I've rewritten this code so the player can't hop again in midair --  
             // unless forces other than gravity act on it in midair -- oh, well, it's  
             // still not perfect -- JC 
-            bool hopkeypressed = pageup;
+            bool hopkeypressed = ctrl;
 
             if (hopkeypressed && !_hopping)
             {

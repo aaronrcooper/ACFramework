@@ -62,7 +62,7 @@ namespace ACFramework
 			ListenerAcceleration = 160.0f; //So Hopper can overcome gravity.  Only affects hop.
 		
             // YHopper hop strength 12.0
-			Listener = new cListenerQuakeScooterYHopper( 0.2f, 12.0f ); 
+			Listener = new cListenerQuakeScooterYHopper( 0.2f, 20.0f ); 
             // the two arguments are walkspeed and hop strength -- JC
             
             addForce( new cForceGravity( 50.0f )); /* Uses  gravity. Default strength is 25.0.

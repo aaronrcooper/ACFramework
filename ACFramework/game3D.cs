@@ -251,9 +251,8 @@ namespace ACFramework
         }
 	} 
 	
-    class cCritter3DBoss :cCritter3Dcharacter
+    class cCritter3DBoss :cCritterArmedPlayer
     {
-        private int BossHealth;
   //      public cCritter3DPlayer(cGame pownergame) 
   //          : base( pownergame ) 
 		//{
@@ -285,11 +284,19 @@ namespace ACFramework
         {
             if (pownergame!=null)
             {
+                BulletClass = new cCritterBullet();
                 //Sets the boss sprite
                 Sprite = new cSpriteQuake(ModelsMD2.Vegeta);
                 setHealth(20);
                 WrapFlag = cCritter.CLAMP;  //Prevents boss from going through walls
-                Armed = true;
+                Armed = true;   //Allows the character to use bullets
+                MaxSpeed = cGame3D.MAXPLAYERSPEED;  //sets max speed
+                AbsorberFlag = true;    //Keeps boss from being buffered out
+                ListenerAcceleration = 160.0f;  //hopper can overcome gravity, only affects hop
+                addForce(new cForceGravity(50.0f)); //gravity
+                AttitudeToMotionLock = false;
+                Attitude = new cMatrix3(new cVector3(0.0f, 0.0f, -1.0f), new cVector3(-1.0f, 0.0f, 0.0f),
+                    new cVector3(0.0f, 1.0f, 0.0f), Position);
             }
         }
 

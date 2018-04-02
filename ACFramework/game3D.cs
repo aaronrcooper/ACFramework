@@ -406,15 +406,16 @@ namespace ACFramework
         {
             Biota.purgeCritters("cCritterWall");
             Biota.purgeCritters("cCritter3Dcharacter");
-            setBorder(10.0f, 15.0f, 10.0f); 
+            setBorder(64.0f, 16.0f, 64.0f); 
 	        cRealBox3 skeleton = new cRealBox3();
             skeleton.copy( _border );
 	        setSkyBox(skeleton);
-	        SkyBox.setAllSidesTexture( BitmapRes.Graphics1, 2 );
+	        SkyBox.setAllSidesTexture( BitmapRes.Dragonball_bg1, 0 );
 	        SkyBox.setSideTexture( cRealBox3.LOY, BitmapRes.Concrete );
 	        SkyBox.setSideSolidColor( cRealBox3.HIY, Color.Blue );
 	        _seedcount = 0;
-	        Player.setMoveBox( new cRealBox3( 10.0f, 15.0f, 10.0f ) );
+	        Player.setMoveBox( new cRealBox3(64.0f, 16.0f, 64.0f) );
+            Player.MaxSpeed = 25.0f;//reduce player max speed to account for smaller room
             float zpos = 0.0f; /* Point on the z axis where we set down the wall.  0 would be center,
 			halfway down the hall, but we can offset it if we like. */
             float height = 0.1f * _border.YSize;
@@ -434,6 +435,19 @@ namespace ACFramework
             pwall.Sprite = pspritebox;
             wentThrough = true;
             startNewRoom = Age;
+        }
+        public void setRoom2()
+        {
+
+        }
+
+        public void setRoom3()
+        {
+
+        }
+        public void setRoom4()
+        {
+
         }
 		
 		public override void seedCritters() 

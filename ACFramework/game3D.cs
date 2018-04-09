@@ -245,14 +245,8 @@ namespace ACFramework
 	
     class cCritter3DBoss :cCritterArmedPlayer
     {
-        //public static readonly int PLAYERHEALTH = 10;
-        //public static readonly int DAMAGESOUND = Sound.Pop;
         public static readonly new float DENSITY = 5.0f;
-        //public static readonly float WAITSHOT = 0.5f;
-        //protected bool _sensitive = true; /* damaged by collision with cCritterEnemy */
-        //protected bool shotDone = true;
-        //protected bool timingAge = false;
-        //protected float startTime;
+
 
         public cCritter3DBoss(cGame pownergame = null) :
             base (pownergame)
@@ -269,6 +263,7 @@ namespace ACFramework
                 AbsorberFlag = true;    //Keeps boss from being buffered out
                 ListenerAcceleration = 160.0f;  //hopper can overcome gravity, only affects hop
                 addForce(new cForceGravity(50.0f)); //gravity
+                addForce(new cForceDrag(100.0f));
                 AttitudeToMotionLock = false;
                 Attitude = new cMatrix3(new cVector3(0.0f, 0.0f, -1.0f), new cVector3(-1.0f, 0.0f, 0.0f),
                     new cVector3(0.0f, 1.0f, 0.0f), Position);
@@ -276,6 +271,9 @@ namespace ACFramework
                 _sensitive = true;  //damaged by collision with player
                 shotDone = true;
                 timingAge = false;
+                setMoveBox(new cRealBox3(64.0f, 16.0f, 64.0f));
+                moveTo(new cVector3(_movebox.Midx, _movebox.Loy,
+                    _movebox.Midz+ 2.0f));
             }
         }
 
@@ -288,6 +286,7 @@ namespace ACFramework
                 pCritter.addHealth(-1);
                 pCritter.moveTo(new cVector3(_movebox.Midx, _movebox.Loy + 1.0f,
                     _movebox.Hiz - 3.0f));
+                Console.WriteLine("Vegeta health: " + this.Health);
                 return true;
             }
             else
@@ -326,8 +325,9 @@ namespace ACFramework
 			rotate( new cSpin( (float) Math.PI / 2.0f, new cVector3(0.0f, 0.0f, 1.0f) )); /* Trial and error shows this
 			rotation works to make it face the z diretion. */ 
 			setRadius( cGame3D.TREASURERADIUS ); 
-			FixedFlag = true; 
-			moveTo( new cVector3( _movebox.Midx, _movebox.Midy - 2.0f, 
+			FixedFlag = true;
+            //setMoveBox(64.0f, 16.0f, 64.0f);
+            moveTo( new cVector3( _movebox.Midx, _movebox.Midy - 2.0f, 
 				_movebox.Loz - 1.5f * cGame3D.TREASURERADIUS )); 
 		} 
 
@@ -413,7 +413,7 @@ namespace ACFramework
 			SkyBox.setSideTexture( cRealBox3.LOZ, BitmapRes.Dragonball_bg1 ); //Back Wall  
 
             WrapFlag = cCritter.BOUNCE; 
-			_seedcount = 0; 
+			_seedcount = 1; 
 			setPlayer( new cCritter3DPlayer( this )); 
 		
 			/* In this world the x and y go left and up respectively, while z comes out of the screen.
@@ -453,7 +453,8 @@ namespace ACFramework
 				5.0f, 2, this ); 
 			cSpriteTextureBox pspritedoor = 
 				new cSpriteTextureBox( pdwall.Skeleton, BitmapRes.Door ); 
-			pdwall.Sprite = pspritedoor; 
+			pdwall.Sprite = pspritedoor;
+            cCritter3DBoss boss = new cCritter3DBoss(this);
 		} 
 
         public void setRoom1( )
@@ -618,7 +619,7 @@ namespace ACFramework
 			Biota.purgeCritters( "cCritterBullet" ); 
 			Biota.purgeCritters( "cCritter3Dcharacter" );
             for (int i = 0; i < _seedcount; i++)
-                new cCritter3DBoss(this);
+                //new cCritter3DBoss(this);
 				//new cCritter3Dcharacter( this );
             Player.moveTo(new cVector3(0.0f, Border.Loy, Border.Hiz - 3.0f)); 
 				/* We start at hiz and move towards	loz */ 

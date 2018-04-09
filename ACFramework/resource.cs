@@ -34,7 +34,10 @@ namespace ACFramework
         public static readonly int Sky = 6;
         public static readonly int Wood2 = 7;
         public static readonly int Concrete = 8;
-        
+        public static readonly int Dragonball_bg1 =9;
+        public static readonly int Dragonball_bg2 =10;
+        public static readonly int Dragonball_bg3 =11;
+
 
         private static readonly string[] Bitmap = new string[] {
                 "dummy", // nonexistent, used as placeholder -- JC
@@ -45,7 +48,10 @@ namespace ACFramework
                 "graphics3.bmp",
                 "sky.bmp",
                 "wood2.bmp",
-                "concrete1.bmp"
+                "concrete1.bmp",
+                "dragonball-bg1.bmp",
+                "db-background2.bmp",
+                "db-background3.bmp"
             };
 
         public BitmapRes()
@@ -261,12 +267,13 @@ namespace ACFramework
         public static readonly int U = 15;
         public static readonly int I = 16;
         public static readonly int D = 17;
+        public static readonly int C = 18;
 
         public static Key[] key;
 
         public vk()
         {
-            key = new Key[] { Key.ControlLeft, 
+            key = new Key[] { Key.ControlLeft,
                 Key.ControlRight,
                 Key.ShiftLeft,
                 Key.ShiftRight,
@@ -283,7 +290,8 @@ namespace ACFramework
                 Key.Delete,
                 Key.U,
                 Key.I,
-                Key.D
+                Key.D,
+                Key.C
             };
 
         }
@@ -334,6 +342,8 @@ namespace ACFramework
         private static readonly ModelsMD2Info[] minfo = {
             new ModelsMD2Info( "goku", "goku.pcx", 0.0f, false ),
             new ModelsMD2Info( "vegeta", "vegeta.pcx", 0.2f, false ),
+            new ModelsMD2Info( "goku", "goku.pcx", 0.3f, false ),
+            new ModelsMD2Info( "vegeta", "vegeta.pcx", 0.2f, true ),
             new ModelsMD2Info( "wank", "black.pcx", 0.1f, true )
         };            
 

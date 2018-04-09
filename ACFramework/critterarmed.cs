@@ -1008,7 +1008,7 @@ namespace ACFramework
 		//		_velocity.setZero(); 
 			} 
 			return base.damage( hitstrength ); // will call cCritter damage 
-		} 
+		}
 
         /// <summary>
         /// If player has collided with a nonwall critter, and _sensitive has been set to true, this will

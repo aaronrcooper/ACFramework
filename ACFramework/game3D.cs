@@ -253,33 +253,16 @@ namespace ACFramework
 	
     class cCritter3DBoss :cCritterArmedPlayer
     {
-  //      public cCritter3DPlayer(cGame pownergame) 
-  //          : base( pownergame ) 
-		//{
-  //          BulletClass = new cCritter3DPlayerBullet();
-  //          Sprite = new cSpriteQuake(ModelsMD2.Goku);
-  //          //Sprite.FillColor = Color.DarkGreen; 
-  //          Sprite.SpriteAttitude = cMatrix3.scale(2, 0.8f, 0.4f);
-  //          setRadius(cGame3D.PLAYERRADIUS); //Default cCritter.PLAYERRADIUS is 0.4.  
-  //          setHealth(10);
-  //          moveTo(_movebox.LoCorner.add(new cVector3(0.0f, 0.0f, 2.0f)));
-  //          WrapFlag = cCritter.CLAMP; //Use CLAMP so you stop dead at edges.
-  //          Armed = true; //Let's use bullets.
-  //          MaxSpeed = cGame3D.MAXPLAYERSPEED;
-  //          AbsorberFlag = true; //Keeps player from being buffeted about.
-  //          ListenerAcceleration = 160.0f; //So Hopper can overcome gravity.  Only affects hop.
+        //public static readonly int PLAYERHEALTH = 10;
+        //public static readonly int DAMAGESOUND = Sound.Pop;
+        public static readonly new float DENSITY = 5.0f;
+        //public static readonly float WAITSHOT = 0.5f;
+        //protected bool _sensitive = true; /* damaged by collision with cCritterEnemy */
+        //protected bool shotDone = true;
+        //protected bool timingAge = false;
+        //protected float startTime;
 
-  //          // YHopper hop strength 12.0
-  //          Listener = new cListenerScooterYHopper(0.2f, 12.0f);
-  //          // the two arguments are walkspeed and hop strength -- JC
-
-  //          addForce(new cForceGravity(50.0f)); /* Uses  gravity. Default strength is 25.0.
-		//	Gravity	will affect player using cListenerHopper. */
-  //          AttitudeToMotionLock = false; //It looks nicer is you don't turn the player with motion.
-  //          Attitude = new cMatrix3(new cVector3(0.0f, 0.0f, -1.0f), new cVector3(-1.0f, 0.0f, 0.0f),
-  //              new cVector3(0.0f, 1.0f, 0.0f), Position);
-  //      }
-        public cCritter3DBoss(cGame pownergame) :
+        public cCritter3DBoss(cGame pownergame = null) :
             base (pownergame)
         {
             if (pownergame!=null)
@@ -297,6 +280,10 @@ namespace ACFramework
                 AttitudeToMotionLock = false;
                 Attitude = new cMatrix3(new cVector3(0.0f, 0.0f, -1.0f), new cVector3(-1.0f, 0.0f, 0.0f),
                     new cVector3(0.0f, 1.0f, 0.0f), Position);
+                AimToAttitudeLock = true;   //aims in the direction of the attitude
+                _sensitive = true;  //damaged by collision with player
+                shotDone = true;
+                timingAge = false;
             }
         }
 
@@ -311,6 +298,20 @@ namespace ACFramework
             }
             else
                 return false;
+        }
+        public override void copy(cCritter pcritter)
+        {
+            base.copy(pcritter);
+            if (!pcritter.IsKindOf("cCritter3DBoss"))
+                return;
+            cCritter3DBoss pcritterplayer = (cCritter3DBoss)(pcritter);
+            _sensitive = pcritterplayer._sensitive;
+        }
+        public override cCritter copy()
+        {
+            cCritter3DBoss c = new cCritter3DBoss();
+            c.copy(this);
+            return c;
         }
     }
 
@@ -499,13 +500,14 @@ namespace ACFramework
             wentThrough = true;
             startNewRoom = Age;
         }
-		
+		//SPAWNS CRITTERS AND PLAYER
 		public override void seedCritters() 
 		{
 			Biota.purgeCritters( "cCritterBullet" ); 
 			Biota.purgeCritters( "cCritter3Dcharacter" );
-            for (int i = 0; i < _seedcount; i++) 
-				new cCritter3Dcharacter( this );
+            for (int i = 0; i < _seedcount; i++)
+                new cCritter3DBoss(this);
+				//new cCritter3Dcharacter( this );
             Player.moveTo(new cVector3(0.0f, Border.Loy, Border.Hiz - 3.0f)); 
 				/* We start at hiz and move towards	loz */ 
 		} 

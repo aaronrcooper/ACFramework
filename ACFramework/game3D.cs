@@ -279,6 +279,8 @@ namespace ACFramework
             }
         }
 
+
+
         public override bool collide(cCritter pCritter)
         {
             if (contains(pCritter)) //disk of pcritter is wholly inside my disk 

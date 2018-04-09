@@ -342,7 +342,6 @@ namespace ACFramework
         private static readonly ModelsMD2Info[] minfo = {
             new ModelsMD2Info( "goku", "goku.pcx", 0.0f, false ),
             new ModelsMD2Info( "vegeta", "vegeta.pcx", 0.2f, false ),
-            new ModelsMD2Info( "goku", "goku.pcx", 0.3f, false ),
             new ModelsMD2Info( "vegeta", "vegeta.pcx", 0.2f, true ),
             new ModelsMD2Info( "wank", "black.pcx", 0.1f, true )
         };            

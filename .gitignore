@@ -2,3 +2,5 @@
 *.ide
 *.pdb
 
+ACFramework/bin/Debug/ACFramework.pdb
+ACFramework/bin/Debug/ACFramework.exe

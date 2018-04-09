@@ -35,7 +35,9 @@ namespace ACFramework
         public static readonly int Wood2 = 7;
         public static readonly int Concrete = 8;
         public static readonly int Dragonball_bg1 =9;
-        
+        public static readonly int Dragonball_bg2 =10;
+        public static readonly int Dragonball_bg3 =11;
+
 
         private static readonly string[] Bitmap = new string[] {
                 "dummy", // nonexistent, used as placeholder -- JC
@@ -47,7 +49,9 @@ namespace ACFramework
                 "sky.bmp",
                 "wood2.bmp",
                 "concrete1.bmp",
-                "dragonball-bg1.bmp"
+                "dragonball-bg1.bmp",
+                "db-background2.bmp",
+                "db-background3.bmp"
             };
 
         public BitmapRes()

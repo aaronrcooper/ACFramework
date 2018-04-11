@@ -4,3 +4,4 @@ C:\Users\s_arcooper\Documents\GitHub\ACFramework\ACFramework\obj\Debug\ACFramewo
 C:\Users\s_arcooper\Documents\GitHub\ACFramework\ACFramework\obj\Debug\ACFramework.csproj.GenerateResource.Cache
 C:\Users\s_arcooper\Documents\GitHub\ACFramework\ACFramework\obj\Debug\ACFramework.exe
 C:\Users\s_arcooper\Documents\GitHub\ACFramework\ACFramework\obj\Debug\ACFramework.pdb
+C:\Users\s_arcooper\Documents\GitHub\ACFramework\ACFramework\obj\Debug\ACFramework.csprojResolveAssemblyReference.cache

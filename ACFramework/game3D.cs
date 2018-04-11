@@ -243,7 +243,7 @@ namespace ACFramework
         }
 	} 
 	
-    class cCritter3DBoss :cCritterArmedPlayer
+    class cCritter3DBoss :cCritterArmedRobot
     {
         public static readonly new float DENSITY = 5.0f;
 
@@ -265,19 +265,24 @@ namespace ACFramework
                 addForce(new cForceGravity(50.0f)); //gravity
                 addForce(new cForceDrag(100.0f));
                 AttitudeToMotionLock = false;
-                Attitude = new cMatrix3(new cVector3(0.0f, 0.0f, -1.0f), new cVector3(-1.0f, 0.0f, 0.0f),
+                //First param determines direction facing (forward/backward)
+                Attitude = new cMatrix3(new cVector3(0.0f, 0.0f, 1.0f), new cVector3(1.0f, 0.0f, 0.0f),
                     new cVector3(0.0f, 1.0f, 0.0f), Position);
                 AimToAttitudeLock = true;   //aims in the direction of the attitude
-                _sensitive = true;  //damaged by collision with player
-                shotDone = true;
-                timingAge = false;
                 setMoveBox(new cRealBox3(64.0f, 16.0f, 64.0f));
                 moveTo(new cVector3(_movebox.Midx, _movebox.Loy,
                     _movebox.Midz+ 2.0f));
+                //Sets the direction the boss is moving to the direction they are facing
+                //rotateAttitude(Tangent.rotationAngle(AttitudeTangent));
+                addForce(new cForceObjectSeek(Player, 10.0f));
             }
         }
 
-
+        public override cCritterBullet shoot()
+        {
+            Framework.snd.play(Sound.LaserFire);
+            return base.shoot();
+        }
 
         public override bool collide(cCritter pCritter)
         {
@@ -286,7 +291,6 @@ namespace ACFramework
                 pCritter.addHealth(-1);
                 pCritter.moveTo(new cVector3(_movebox.Midx, _movebox.Loy + 1.0f,
                     _movebox.Hiz - 3.0f));
-                Console.WriteLine("Vegeta health: " + this.Health);
                 return true;
             }
             else
@@ -298,7 +302,6 @@ namespace ACFramework
             if (!pcritter.IsKindOf("cCritter3DBoss"))
                 return;
             cCritter3DBoss pcritterplayer = (cCritter3DBoss)(pcritter);
-            _sensitive = pcritterplayer._sensitive;
         }
         public override cCritter copy()
         {

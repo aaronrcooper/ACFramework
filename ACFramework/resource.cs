@@ -35,8 +35,16 @@ namespace ACFramework
         public static readonly int Wood2 = 7;
         public static readonly int Concrete = 8;
         public static readonly int Dragonball_bg1 =9;
-        public static readonly int Dragonball_bg2 =10;
-        public static readonly int Dragonball_bg3 =11;
+        public static readonly int Dragonball_bg1_90l =10;
+        public static readonly int Dragonball_bg1_90r =11;
+        public static readonly int Dragonball_bg2 =12;
+        public static readonly int Dragonball_bg2_90l =13;
+        public static readonly int Dragonball_bg2_90r =14;
+        public static readonly int Dragonball_bg3 =15;
+        public static readonly int Dragonball_bg3_90l =16;
+        public static readonly int Dragonball_bg3_90r =17;
+        public static readonly int BossRoom = 18;
+        public static readonly int BossRoom_90r =19;
 
 
         private static readonly string[] Bitmap = new string[] {
@@ -50,8 +58,16 @@ namespace ACFramework
                 "wood2.bmp",
                 "concrete1.bmp",
                 "dragonball-bg1.bmp",
+                "dragonball-bg1-90l.bmp",
+                "dragonball-bg1-90r.bmp",
                 "db-background2.bmp",
-                "db-background3.bmp"
+                "db-background2-90l.bmp",
+                "db-background2-90r.bmp",
+                "db-background3.bmp",
+                "db-background3-90l.bmp",
+                "db-background3-90r.bmp",
+                "BossRoom.bmp",
+                "BossRoom-90r.bmp"
             };
 
         public BitmapRes()

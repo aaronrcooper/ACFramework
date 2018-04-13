@@ -217,6 +217,7 @@ namespace ACFramework
 		public override void update( ACView pactiveview, float dt ) 
 		{ 
 			base.update( pactiveview, dt ); //Always call this first
+            rotateAttitude(Tangent.rotationAngle(AttitudeTangent));
 			if ( (_outcode & cRealBox3.BOX_HIZ) != 0 ) /* use bitwise AND to check if a flag is set. */ 
 				delete_me(); //tell the game to remove yourself if you fall up to the hiz.
         } 
@@ -263,7 +264,7 @@ namespace ACFramework
                 AbsorberFlag = true;    //Keeps boss from being buffered out
                 ListenerAcceleration = 160.0f;  //hopper can overcome gravity, only affects hop
                 addForce(new cForceGravity(50.0f)); //gravity
-                addForce(new cForceDrag(100.0f));
+                //addForce(new cForceDrag(100.0f));
                 AttitudeToMotionLock = false;
                 //First param determines direction facing (forward/backward)
                 Attitude = new cMatrix3(new cVector3(0.0f, 0.0f, 1.0f), new cVector3(1.0f, 0.0f, 0.0f),
@@ -274,7 +275,8 @@ namespace ACFramework
                     _movebox.Midz+ 2.0f));
                 //Sets the direction the boss is moving to the direction they are facing
                 //rotateAttitude(Tangent.rotationAngle(AttitudeTangent));
-                addForce(new cForceObjectSeek(Player, 10.0f));
+                addForce(new cForceObjectSeek(Player, 1.0f));
+                _waitshoot = 1.0f;
             }
         }
 
@@ -296,6 +298,12 @@ namespace ACFramework
             else
                 return false;
         }
+        public override void update(ACView pactiveview, float dt)
+        {
+            base.update(pactiveview, dt); //Always call this first
+            rotateAttitude(Tangent.rotationAngle(AttitudeTangent));
+        }
+
         public override void copy(cCritter pcritter)
         {
             base.copy(pcritter);

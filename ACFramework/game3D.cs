@@ -275,12 +275,13 @@ namespace ACFramework
                 Attitude = new cMatrix3(new cVector3(0.0f, 0.0f, 1.0f), new cVector3(1.0f, 0.0f, 0.0f),
                     new cVector3(0.0f, 1.0f, 0.0f), Position);
                 AimToAttitudeLock = true;   //aims in the direction of the attitude
-                setMoveBox(new cRealBox3(64.0f, 16.0f, 64.0f));
+                setMoveBox(_movebox);
+                //setMoveBox(new cRealBox3(64.0f, 16.0f, 64.0f));
                 moveTo(new cVector3(_movebox.Midx, _movebox.Loy,
                     _movebox.Midz+ 2.0f));
                 //Sets the direction the boss is moving to the direction they are facing
                 //rotateAttitude(Tangent.rotationAngle(AttitudeTangent));
-                addForce(new cForceObjectSeek(Player, 1.0f));
+                addForce(new cForceObjectSeek(Player, 3.0f));
                 _waitshoot = 1.0f;
                 setMoveBox(_movebox);
             }

@@ -34,7 +34,18 @@ namespace ACFramework
         public static readonly int Sky = 6;
         public static readonly int Wood2 = 7;
         public static readonly int Concrete = 8;
-        
+        public static readonly int Dragonball_bg1 =9;
+        public static readonly int Dragonball_bg1_90l =10;
+        public static readonly int Dragonball_bg1_90r =11;
+        public static readonly int Dragonball_bg2 =12;
+        public static readonly int Dragonball_bg2_90l =13;
+        public static readonly int Dragonball_bg2_90r =14;
+        public static readonly int Dragonball_bg3 =15;
+        public static readonly int Dragonball_bg3_90l =16;
+        public static readonly int Dragonball_bg3_90r =17;
+        public static readonly int BossRoom = 18;
+        public static readonly int BossRoom_90r =19;
+
 
         private static readonly string[] Bitmap = new string[] {
                 "dummy", // nonexistent, used as placeholder -- JC
@@ -45,7 +56,18 @@ namespace ACFramework
                 "graphics3.bmp",
                 "sky.bmp",
                 "wood2.bmp",
-                "concrete1.bmp"
+                "concrete1.bmp",
+                "dragonball-bg1.bmp",
+                "dragonball-bg1-90l.bmp",
+                "dragonball-bg1-90r.bmp",
+                "db-background2.bmp",
+                "db-background2-90l.bmp",
+                "db-background2-90r.bmp",
+                "db-background3.bmp",
+                "db-background3-90l.bmp",
+                "db-background3-90r.bmp",
+                "BossRoom.bmp",
+                "BossRoom-90r.bmp"
             };
 
         public BitmapRes()
@@ -261,12 +283,13 @@ namespace ACFramework
         public static readonly int U = 15;
         public static readonly int I = 16;
         public static readonly int D = 17;
+        public static readonly int C = 18;
 
         public static Key[] key;
 
         public vk()
         {
-            key = new Key[] { Key.ControlLeft, 
+            key = new Key[] { Key.ControlLeft,
                 Key.ControlRight,
                 Key.ShiftLeft,
                 Key.ShiftRight,
@@ -283,7 +306,8 @@ namespace ACFramework
                 Key.Delete,
                 Key.U,
                 Key.I,
-                Key.D
+                Key.D,
+                Key.C
             };
 
         }
@@ -326,19 +350,15 @@ namespace ACFramework
         // add more models here that you need in numerical order
         // then add to the array below in the same order
 
-        public static readonly int Squidge = 0;
-        public static readonly int Robot = 1;
-        public static readonly int Link = 2;
-        public static readonly int Knight = 3;
-        public static readonly int CitrusFrog = 4;
+        public static readonly int Goku = 0;
+        public static readonly int Vegeta = 1;
+        public static readonly int Wank = 2;
 
         // at least one must be set true
         private static readonly ModelsMD2Info[] minfo = {
-            new ModelsMD2Info( "Squidge", "squidge.pcx", 0.0f, true ),
-            new ModelsMD2Info( "robot", "robot.pcx", 0.2f, true ),
-            new ModelsMD2Info( "link", "soft_link.pcx", 0.1f, true ),
-            new ModelsMD2Info( "pknight", "ctf_b.pcx", 0.15f, true ),
-            new ModelsMD2Info( "citrusfrog", "BigRed.pcx", 0.3f, true )
+            new ModelsMD2Info( "goku", "goku.pcx", 0.3f, false ),
+            new ModelsMD2Info( "vegeta", "vegeta.pcx", 0.2f, true ),
+            new ModelsMD2Info( "wank", "black.pcx", 0.1f, true )
         };            
 
         private static int[] randomCritters;

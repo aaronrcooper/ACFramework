@@ -26,8 +26,8 @@ namespace ACFramework
         public static readonly float TURNPROPORTION = 0.005f;
         public static readonly float MOVEPROPORTION = 0.1f;
         public static readonly float STARTYOFFSETPROPORTION = 0.25f;
-        public static readonly float PROPORTIONOFWORLDTOSHOW = 0.75f;
-        public static readonly float MINPROPORTIONOFWORLDTOSHOW = 0.3f;
+        public static readonly float PROPORTIONOFWORLDTOSHOW = .75f;
+        public static readonly float MINPROPORTIONOFWORLDTOSHOW = 0.2f;
         public static readonly float MAXPROPORTIONOFWORLDTOSHOW = 3.0f;
         protected ACView _pownerview;
         protected bool _perspective; /* FALSE means use Ortho projection, 

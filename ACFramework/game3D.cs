@@ -259,18 +259,19 @@ namespace ACFramework
 		{ 
 			/* The sprites look nice from afar, but bitmap speed is really slow
 		when you get close to them, so don't use this. */ 
-			cPolygon ppoly = new cPolygon( 24 ); 
-			ppoly.Filled = false; 
-			ppoly.LineWidthWeight = 0.5f;
-			Sprite = ppoly; 
+			cSpriteSphere sphere = new cSpriteSphere(1,32,32); 
+            sphere.FillColor = Color.Crimson;
+			sphere.Filled = true;
+			sphere.LineWidthWeight = 0.5f;
+			Sprite = sphere; 
 			_collidepriority = cCollider.CP_PLAYER + 1; /* Let this guy call collide on the
 			player, as his method is overloaded in a special way. */ 
 			rotate( new cSpin( (float) Math.PI / 2.0f, new cVector3(0.0f, 0.0f, 1.0f) )); /* Trial and error shows this
 			rotation works to make it face the z diretion. */ 
 			setRadius( cGame3D.TREASURERADIUS ); 
-			FixedFlag = true; 
-			moveTo( new cVector3( _movebox.Midx, _movebox.Midy - 2.0f, 
-				_movebox.Loz - 1.5f * cGame3D.TREASURERADIUS )); 
+			//FixedFlag = true; 
+			moveTo( new cVector3( _movebox.Midx, _movebox.Loy - 2.0f, 
+				_movebox.Midz - 1.5f * cGame3D.TREASURERADIUS )); 
 		} 
 
 		
@@ -314,17 +315,85 @@ namespace ACFramework
                 return "cCritterTreasure";
             }
         }
-	} 
-	
-	//======================cGame3D========================== 
-	
-	class cGame3D : cGame 
+	}
+
+    class cCritterDragonball : cCritter
+    {   // Try jumping through this hoop
+
+        public cCritterDragonball(cGame pownergame,float pX,float pY,float pZ) :
+        base(pownergame)
+        {
+            float x = pX;
+            float y = pY;
+            float z = pZ;
+            /* The sprites look nice from afar, but bitmap speed is really slow
+		when you get close to them, so don't use this. */
+            cSpriteSphere sphere = new cSpriteSphere(1, 16, 16);
+            sphere.FillColor = Color.Orange;
+            sphere.Filled = true;
+            sphere.LineWidthWeight = 0.5f;
+            Sprite = sphere;
+            _collidepriority = cCollider.CP_PLAYER + 1; /* Let this guy call collide on the
+			player, as his method is overloaded in a special way. */
+            rotate(new cSpin((float)Math.PI / 2.0f, new cVector3(0.0f, 0.0f, 1.0f))); /* Trial and error shows this
+			rotation works to make it face the z diretion. */
+            setRadius(.2f);
+            //FixedFlag = true; 
+            moveTo(new cVector3(x, y, z));
+        }
+
+
+        public override bool collide(cCritter pcritter)
+        {
+            if (contains(pcritter)) //disk of pcritter is wholly inside my disk 
+            {
+                Framework.snd.play(Sound.Clap);
+                pcritter.addScore(100);
+                pcritter.addHealth(1);
+                pcritter.moveTo(new cVector3(_movebox.Midx, _movebox.Loy + 1.0f,
+                    _movebox.Hiz - 3.0f));
+                return true;
+            }
+            else
+                return false;
+        }
+
+        //Checks if pcritter inside.
+
+        public override int collidesWith(cCritter pothercritter)
+        {
+            if (pothercritter.IsKindOf("cCritter3DPlayer"))
+                return cCollider.COLLIDEASCALLER;
+            else
+                return cCollider.DONTCOLLIDE;
+        }
+
+        /* Only collide
+			with cCritter3DPlayer. */
+
+        public override bool IsKindOf(string str)
+        {
+            return str == "cCritterTreasure" || base.IsKindOf(str);
+        }
+
+        public override string RuntimeClass
+        {
+            get
+            {
+                return "cCritterTreasure";
+            }
+        }
+    }
+
+    //======================cGame3D========================== 
+
+    class cGame3D : cGame 
 	{ 
 		public static readonly float TREASURERADIUS = 1.2f; 
 		public static readonly float WALLTHICKNESS = 0.5f; 
 		public static readonly float PLAYERRADIUS = 0.2f; 
 		public static readonly float MAXPLAYERSPEED = 30.0f; 
-		private cCritterTreasure _ptreasure; 
+		private cCritterDragonball _pdragonball; 
 		private bool doorcollision;
         private bool wentThrough = false;
         private float startNewRoom;
@@ -355,8 +424,15 @@ namespace ACFramework
 		
 			WrapFlag = cCritter.BOUNCE; 
 			_seedcount = 7; 
-			setPlayer( new cCritter3DPlayer( this )); 
-			_ptreasure = new cCritterTreasure( this ); 
+			setPlayer( new cCritter3DPlayer( this ));
+            Random rnd = new Random();
+            float y = -10;
+            for (int i = 0; i < 10; i++)
+            {
+                float x = rnd.Next(-40, 40);
+                float z = rnd.Next(-40, 40);
+                _pdragonball = new cCritterDragonball(this, x, y, z);
+            }    
 		
 			/* In this world the x and y go left and up respectively, while z comes out of the screen.
 		A wall views its "thickness" as in the y direction, which is up here, and its

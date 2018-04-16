@@ -79,7 +79,7 @@ namespace ACFramework
         //================================================ 
         //Position Fields ================================= 
         protected cVector3 _position;
-        protected cRealBox3 _movebox; //Keep critter inside _movebox.
+        public cRealBox3 _movebox; //Keep critter inside _movebox.
         protected cRealBox3 _dragbox; /* Usually same as _movebox, but in cGamePickNPop, it's bigger, so
 			can drag a critter outside of its _movebox. */
         protected int _wrapflag; //BOUNCE, WRAP, or CLAMP when you bump a wall.

@@ -44,23 +44,26 @@ namespace ACFramework
 	
 	class cCritter3DPlayer : cCritterArmedPlayer 
 	{ 
+        private bool warningGiven = false;
+		
         public cCritter3DPlayer( cGame pownergame ) 
             : base( pownergame ) 
 		{ 
 			BulletClass = new cCritter3DPlayerBullet( ); 
-            Sprite = new cSpriteQuake(ModelsMD2.Goku); 
+            Sprite = new cSpriteSphere(); 
+			Sprite.FillColor = Color.DarkGreen; 
 			Sprite.SpriteAttitude = cMatrix3.scale( 2, 0.8f, 0.4f ); 
-			setRadius( 0.42f ); //Default cCritter.PLAYERRADIUS is 0.4.  
+			setRadius( cGame3D.PLAYERRADIUS ); //Default cCritter.PLAYERRADIUS is 0.4.  
 			setHealth( 10 ); 
 			moveTo( _movebox.LoCorner.add( new cVector3( 0.0f, 0.0f, 2.0f ))); 
 			WrapFlag = cCritter.CLAMP; //Use CLAMP so you stop dead at edges.
 			Armed = true; //Let's use bullets.
-			MaxSpeed =  cGame3D.MAXPLAYERSPEED + 20; 
+			MaxSpeed =  cGame3D.MAXPLAYERSPEED; 
 			AbsorberFlag = true; //Keeps player from being buffeted about.
 			ListenerAcceleration = 160.0f; //So Hopper can overcome gravity.  Only affects hop.
 		
             // YHopper hop strength 12.0
-			Listener = new cListenerQuakeScooterYHopper( 0.2f, 20.0f ); 
+			Listener = new cListenerScooterYHopper( 0.2f, 12.0f ); 
             // the two arguments are walkspeed and hop strength -- JC
             
             addForce( new cForceGravity( 50.0f )); /* Uses  gravity. Default strength is 25.0.
@@ -73,6 +76,12 @@ namespace ACFramework
         public override void update(ACView pactiveview, float dt)
         {
             base.update(pactiveview, dt); //Always call this first
+            if (!warningGiven && distanceTo(new cVector3(Game.Border.Lox, Game.Border.Loy,
+                Game.Border.Midz)) < 3.0f)
+            {
+                warningGiven = true;
+                MessageBox.Show("DON'T GO THROUGH THAT DOOR!!!  DON'T EVEN THINK ABOUT IT!!!");
+            }
  
         } 
 
@@ -385,14 +394,9 @@ namespace ACFramework
 		public static readonly float PLAYERRADIUS = 0.2f; 
 		public static readonly float MAXPLAYERSPEED = 30.0f; 
 		private cCritterDragonball _pdragonball; 
-		public static readonly float MAXPLAYERSPEED = 30.0f;
-        public static readonly float BORDER_XZ = 50.0f;//length and width of rooms
-        public static readonly float BORDER_Y = 16.0f;//height of rooms
-		private cCritterTreasure _ptreasure; 
 		private bool doorcollision;
         private bool wentThrough = false;
         private float startNewRoom;
-        private int roomNumber = 1;//keeps track of the room that the player is currently in
 		
 		public cGame3D() 
 		{
@@ -400,7 +404,7 @@ namespace ACFramework
 			_menuflags &= ~ cGame.MENU_BOUNCEWRAP; 
 			_menuflags |= cGame.MENU_HOPPER; //Turn on hopper listener option.
 			_spritetype = cGame.ST_MESHSKIN; 
-			setBorder( BORDER_XZ, BORDER_Y, BORDER_XZ ); // size of the world
+			setBorder( 64.0f, 16.0f, 64.0f ); // size of the world
 		
 			cRealBox3 skeleton = new cRealBox3();
             skeleton.copy(_border);
@@ -429,16 +433,6 @@ namespace ACFramework
                 float z = rnd.Next(-40, 40);
                 _pdragonball = new cCritterDragonball(this, x, y, z);
             }    
-			SkyBox.setSideTexture(cRealBox3.HIY, BitmapRes.Sky); //ceiling
-			SkyBox.setSideTexture( cRealBox3.LOY, BitmapRes.Concrete ); //floor  
-			SkyBox.setSideTexture( cRealBox3.LOX, BitmapRes.Dragonball_bg1_90r ); //Left Wall - flip 90r
-			SkyBox.setSideTexture( cRealBox3.HIX, BitmapRes.Dragonball_bg1_90r ); //Right Wall -flip 90l
-			SkyBox.setSideTexture( cRealBox3.HIZ, BitmapRes.Dragonball_bg1 ); //Front Wall  
-			SkyBox.setSideTexture( cRealBox3.LOZ, BitmapRes.Dragonball_bg1 ); //Back Wall  
-
-            WrapFlag = cCritter.BOUNCE; 
-			_seedcount = 0; 
-			setPlayer( new cCritter3DPlayer( this )); 
 		
 			/* In this world the x and y go left and up respectively, while z comes out of the screen.
 		A wall views its "thickness" as in the y direction, which is up here, and its
@@ -446,12 +440,12 @@ namespace ACFramework
 			//First draw a wall with dy height resting on the bottom of the world.
 			float zpos = 0.0f; /* Point on the z axis where we set down the wall.  0 would be center,
 			halfway down the hall, but we can offset it if we like. */ 
-			float height = _border.YSize; 
+			float height = 0.1f * _border.YSize; 
 			float ycenter = -_border.YRadius + height / 2.0f; 
 			float wallthickness = cGame3D.WALLTHICKNESS;
             cCritterWall pwall = new cCritterWall( 
-				new cVector3( _border.Midx + 10.0f, ycenter, zpos -12 ), 
-				new cVector3( _border.Hix, ycenter, zpos - 12 ), 
+				new cVector3( _border.Midx + 2.0f, ycenter, zpos ), 
+				new cVector3( _border.Hix, ycenter, zpos ), 
 				height, //thickness param for wall's dy which goes perpendicular to the 
 					//baseline established by the frist two args, up the screen 
 				wallthickness, //height argument for this wall's dz  goes into the screen 
@@ -459,22 +453,27 @@ namespace ACFramework
 			cSpriteTextureBox pspritebox = 
 				new cSpriteTextureBox( pwall.Skeleton, BitmapRes.Wall3, 16 ); //Sets all sides 
 				/* We'll tile our sprites three times along the long sides, and on the
-			short ends, we'll only tile them once, so we reset these two.*/
-          pwall.Sprite = pspritebox;
-
-            cCritterWall pNEWall = new cCritterWall(
-                new cVector3(_border.Midx + 10.0f, _border.Midy, zpos - 17),
-                new cVector3(_border.Midx + 10.0f, _border.Midy, _border.Loz),
-                wallthickness,
-                height,
-                this);
-            cSpriteTextureBox pNEWallSprite = new cSpriteTextureBox(pNEWall.Skeleton, BitmapRes.Wall3, 16);
-            pNEWall.Sprite = pNEWallSprite;
-
-            cCritterDoor pdwall = new cCritterDoor( 
-				new cVector3( _border.Midx, _border.Loy, _border.Loz-0.9f ), 
-				new cVector3( _border.Midx, _border.Midy, _border.Loz-0.9f ), 
-				5.0f, 2, this ); 
+			short ends, we'll only tile them once, so we reset these two. */
+          pwall.Sprite = pspritebox; 
+		
+		
+			//Then draw a ramp to the top of the wall.  Scoot it over against the right wall.
+			float planckwidth = 0.75f * height; 
+			pwall = new cCritterWall( 
+				new cVector3( _border.Hix -planckwidth / 2.0f, _border.Loy, _border.Hiz - 2.0f), 
+				new cVector3( _border.Hix - planckwidth / 2.0f, _border.Loy + height, zpos ), 
+				planckwidth, //thickness param for wall's dy which is perpenedicualr to the baseline, 
+						//which goes into the screen, so thickness goes to the right 
+				wallthickness, //_border.zradius(),  //height argument for wall's dz which goes into the screen 
+				this );
+            cSpriteTextureBox stb = new cSpriteTextureBox(pwall.Skeleton, 
+                BitmapRes.Wood2, 2 );
+            pwall.Sprite = stb;
+		
+			cCritterDoor pdwall = new cCritterDoor( 
+				new cVector3( _border.Lox, _border.Loy, _border.Midz ), 
+				new cVector3( _border.Lox, _border.Midy - 3, _border.Midz ), 
+				0.1f, 2, this ); 
 			cSpriteTextureBox pspritedoor = 
 				new cSpriteTextureBox( pdwall.Skeleton, BitmapRes.Door ); 
 			pdwall.Sprite = pspritedoor; 
@@ -484,92 +483,15 @@ namespace ACFramework
         {
             Biota.purgeCritters("cCritterWall");
             Biota.purgeCritters("cCritter3Dcharacter");
-            setBorder(BORDER_XZ, BORDER_Y, BORDER_XZ);
-            cRealBox3 skeleton = new cRealBox3();
+            setBorder(10.0f, 15.0f, 10.0f); 
+	        cRealBox3 skeleton = new cRealBox3();
             skeleton.copy( _border );
 	        setSkyBox(skeleton);
-	        SkyBox.setAllSidesTexture( BitmapRes.Dragonball_bg3, 0 );
-            SkyBox.setSideTexture(cRealBox3.LOX, BitmapRes.Dragonball_bg3_90r);
-            SkyBox.setSideTexture(cRealBox3.HIX, BitmapRes.Dragonball_bg3_90r);
-            SkyBox.setSideTexture( cRealBox3.LOY, BitmapRes.Concrete );
+	        SkyBox.setAllSidesTexture( BitmapRes.Graphics1, 2 );
+	        SkyBox.setSideTexture( cRealBox3.LOY, BitmapRes.Concrete );
 	        SkyBox.setSideSolidColor( cRealBox3.HIY, Color.Blue );
 	        _seedcount = 0;
-	        Player.setMoveBox( new cRealBox3(BORDER_XZ, BORDER_Y, BORDER_XZ) );
-            Player.MaxSpeed = 50;//reduce player max speed to account for smaller room
-            Player.moveTo(new cVector3(_border.Midx, _border.Midy, _border.Hiz));
-            float zpos = 0.0f; /* Point on the z axis where we set down the wall.  0 would be center,
-			halfway down the hall, but we can offset it if we like. */
-            float height = 0.1f * _border.YSize;
-            float ycenter = -_border.YRadius + height / 2.0f;
-            wentThrough = true;
-            startNewRoom = Age;
-            cCritterDoor pdwall = new cCritterDoor(
-                new cVector3(_border.Lox, _border.Loy, _border.Midz),
-                new cVector3(_border.Lox, _border.Midy - 3, _border.Midz),
-                0.1f, 3, this);
-            cSpriteTextureBox pspritedoor =
-                new cSpriteTextureBox(pdwall.Skeleton, BitmapRes.Door);
-            pdwall.Sprite = pspritedoor;
-
-            //Draw the ramp
-            float width = 10.0f;
-            cCritterWall pwall = new cCritterWall(
-                new cVector3(_border.Hix - width / 2.0f, _border.Loy -1, _border.Hiz - 2.0f),
-                new cVector3(_border.Hix - width / 2.0f, _border.Loy + 6, zpos),
-                width,
-                cGame3D.WALLTHICKNESS,
-                this);
-            cSpriteTextureBox stb = new cSpriteTextureBox(pwall.Skeleton,
-                BitmapRes.Wood2, 2);
-            pwall.Sprite = stb;
-
-            //draw a platform at the end of the ramp
-            cCritterWall pPlatform = new cCritterWall(
-                new cVector3(_border.Hix-_border.XSize/2.0f, _border.Loy+6, zpos),
-                new cVector3(_border.Hix-_border.XSize/2.0f, _border.Loy+6, _border.Loz),
-                _border.XSize,
-                cGame3D.WALLTHICKNESS,
-                this);
-            cSpriteTextureBox pPlatformSprite = new cSpriteTextureBox(pPlatform.Skeleton, BitmapRes.Wall3, 16);
-            pPlatform.Sprite = pPlatformSprite;
-
-            //draw a wall on the lox of the ramp
-            cCritterWall pRampWall = new cCritterWall(
-                new cVector3(_border.Hix - width, _border.Midy, _border.Hiz - 3),
-                new cVector3(_border.Hix - width, _border.Midy, zpos),
-                cGame3D.WALLTHICKNESS,
-                _border.YSize,
-                this);
-            cSpriteTextureBox pRampWallSprite = new cSpriteTextureBox(pRampWall.Skeleton, BitmapRes.Wall3, 16);
-            pRampWall.Sprite = pRampWallSprite;
-
-            //close off the upstairs room
-            cCritterWall pUpstairsWall = new cCritterWall(
-                new cVector3(_border.Hix - width, _border.Midy + 0.35f*_border.YSize, zpos),
-                new cVector3(_border.Lox, _border.Midy + 0.35f*_border.YSize, zpos),
-                _border.YSize,
-                cGame3D.WALLTHICKNESS,
-                this);
-            cSpriteTextureBox pUpstairsWallSprite = new cSpriteTextureBox(pUpstairsWall.Skeleton, BitmapRes.Wall3, 16);
-            pUpstairsWall.Sprite = pUpstairsWallSprite;
-        }
-        public void setRoom2()
-        {
-            Biota.purgeCritters("cCritterWall");
-            Biota.purgeCritters("cCritter3Dcharacter");
-            setBorder(BORDER_XZ, BORDER_Y, BORDER_XZ);
-            cRealBox3 skeleton = new cRealBox3();
-            skeleton.copy(_border);
-            setSkyBox(skeleton);
-            SkyBox.setAllSidesTexture(BitmapRes.Dragonball_bg2, 0);
-            SkyBox.setSideTexture(cRealBox3.LOX, BitmapRes.Dragonball_bg2_90r);
-            SkyBox.setSideTexture(cRealBox3.HIX, BitmapRes.Dragonball_bg2_90r);
-            SkyBox.setSideTexture(cRealBox3.LOY, BitmapRes.Concrete);
-            SkyBox.setSideSolidColor(cRealBox3.HIY, Color.Blue);
-            _seedcount = 0;
-            Player.setMoveBox(new cRealBox3(BORDER_XZ, BORDER_Y, BORDER_XZ));
-            Player.MaxSpeed = 30;//reduce player max speed to account for smaller room
-            Player.moveTo(new cVector3(_border.Midx, _border.Midy, _border.Hiz));
+	        Player.setMoveBox( new cRealBox3( 10.0f, 15.0f, 10.0f ) );
             float zpos = 0.0f; /* Point on the z axis where we set down the wall.  0 would be center,
 			halfway down the hall, but we can offset it if we like. */
             float height = 0.1f * _border.YSize;
@@ -579,7 +501,7 @@ namespace ACFramework
                 new cVector3(_border.Midx + 2.0f, ycenter, zpos),
                 new cVector3(_border.Hix, ycenter, zpos),
                 height, //thickness param for wall's dy which goes perpendicular to the 
-                        //baseline established by the frist two args, up the screen 
+                //baseline established by the frist two args, up the screen 
                 wallthickness, //height argument for this wall's dz  goes into the screen 
                 this);
             cSpriteTextureBox pspritebox =
@@ -589,104 +511,6 @@ namespace ACFramework
             pwall.Sprite = pspritebox;
             wentThrough = true;
             startNewRoom = Age;
-            cCritterDoor pdwall = new cCritterDoor(
-                new cVector3(_border.Midx, _border.Loy, _border.Loz - 0.9f),
-                new cVector3(_border.Midx, _border.Midy, _border.Loz - 0.9f),
-                5.0f, 2, this);
-            cSpriteTextureBox pspritedoor =
-                new cSpriteTextureBox(pdwall.Skeleton, BitmapRes.Door);
-            pdwall.Sprite = pspritedoor;
-        }
-
-        public void setRoom3()
-        {
-            Biota.purgeCritters("cCritterWall");
-            Biota.purgeCritters("cCritter3Dcharacter");
-            setBorder(BORDER_XZ, BORDER_Y, BORDER_XZ);
-            cRealBox3 skeleton = new cRealBox3();
-            skeleton.copy(_border);
-            setSkyBox(skeleton);
-            SkyBox.setAllSidesTexture(BitmapRes.Dragonball_bg1, 0);
-            SkyBox.setSideTexture(cRealBox3.LOX, BitmapRes.Dragonball_bg1_90r);
-            SkyBox.setSideTexture(cRealBox3.HIX, BitmapRes.Dragonball_bg1_90r);
-            SkyBox.setSideTexture(cRealBox3.LOY, BitmapRes.Concrete);
-            SkyBox.setSideSolidColor(cRealBox3.HIY, Color.Blue);
-            _seedcount = 0;
-            Player.setMoveBox(new cRealBox3(BORDER_XZ, BORDER_Y, BORDER_XZ));
-            Player.MaxSpeed = 30;//reduce player max speed to account for smaller room
-            Player.moveTo(new cVector3(_border.Midx, _border.Midy, _border.Hiz));
-            float zpos = 0.0f; /* Point on the z axis where we set down the wall.  0 would be center,
-			halfway down the hall, but we can offset it if we like. */
-            float height = 0.1f * _border.YSize;
-            float ycenter = -_border.YRadius + height / 2.0f;
-            float wallthickness = cGame3D.WALLTHICKNESS;
-            cCritterWall pwall = new cCritterWall(
-                new cVector3(_border.Midx + 2.0f, ycenter, zpos),
-                new cVector3(_border.Hix, ycenter, zpos),
-                height, //thickness param for wall's dy which goes perpendicular to the 
-                        //baseline established by the frist two args, up the screen 
-                wallthickness, //height argument for this wall's dz  goes into the screen 
-                this);
-            cSpriteTextureBox pspritebox =
-                new cSpriteTextureBox(pwall.Skeleton, BitmapRes.Wall3, 16); //Sets all sides 
-            /* We'll tile our sprites three times along the long sides, and on the
-        short ends, we'll only tile them once, so we reset these two. */
-            pwall.Sprite = pspritebox;
-            wentThrough = true;
-            startNewRoom = Age;
-            cCritterDoor pdwall = new cCritterDoor(
-                new cVector3(_border.Midx, _border.Loy, _border.Loz - 0.9f),
-                new cVector3(_border.Midx, _border.Midy, _border.Loz - 0.9f),
-                5.0f, 2, this);
-            cSpriteTextureBox pspritedoor =
-                new cSpriteTextureBox(pdwall.Skeleton, BitmapRes.Door);
-            pdwall.Sprite = pspritedoor;
-        }
-        public void setRoom4()
-        {
-            Biota.purgeCritters("cCritterWall");
-            Biota.purgeCritters("cCritter3Dcharacter");
-            setBorder(BORDER_XZ, BORDER_Y, BORDER_XZ);
-            cRealBox3 skeleton = new cRealBox3();
-            skeleton.copy(_border);
-            setSkyBox(skeleton);
-            SkyBox.setAllSidesTexture(BitmapRes.BossRoom, 0);
-            SkyBox.setSideTexture(cRealBox3.LOX, BitmapRes.BossRoom_90r);
-            SkyBox.setSideTexture(cRealBox3.HIX, BitmapRes.BossRoom_90r);
-            SkyBox.setSideTexture(cRealBox3.LOY, BitmapRes.Concrete);
-            SkyBox.setSideSolidColor(cRealBox3.HIY, Color.Blue);
-            _seedcount = 0;
-            Player.setMoveBox(new cRealBox3(BORDER_XZ, BORDER_Y, BORDER_XZ));
-            Player.MaxSpeed = 30;//reduce player max speed to account for smaller room
-            Player.moveTo(new cVector3(_border.Midx, _border.Midy, _border.Hiz));
-            float zpos = 0.0f; /* Point on the z axis where we set down the wall.  0 would be center,
-			halfway down the hall, but we can offset it if we like. */
-            float height = 0.1f * _border.YSize;
-            float ycenter = -_border.YRadius + height / 2.0f;
-            float wallthickness = cGame3D.WALLTHICKNESS;
-            cCritterWall pwall = new cCritterWall(
-                new cVector3(_border.Midx + 2.0f, ycenter, zpos),
-                new cVector3(_border.Hix, ycenter, zpos),
-                height, //thickness param for wall's dy which goes perpendicular to the 
-                        //baseline established by the frist two args, up the screen 
-                wallthickness, //height argument for this wall's dz  goes into the screen 
-                this);
-            cSpriteTextureBox pspritebox =
-                new cSpriteTextureBox(pwall.Skeleton, BitmapRes.Wall3, 16); //Sets all sides 
-            /* We'll tile our sprites three times along the long sides, and on the
-        short ends, we'll only tile them once, so we reset these two. */
-            pwall.Sprite = pspritebox;
-            wentThrough = true;
-            startNewRoom = Age;
-            cCritterDoor pdwall = new cCritterDoor(
-                new cVector3(_border.Midx, _border.Loy, _border.Loz - 0.9f),
-                new cVector3(_border.Midx, _border.Midy, _border.Loz - 0.9f),
-                5.0f, 2, this);
-            cSpriteTextureBox pspritedoor =
-                new cSpriteTextureBox(pdwall.Skeleton, BitmapRes.Door);
-            pdwall.Sprite = pspritedoor;
-
-
         }
 		
 		public override void seedCritters() 
@@ -724,9 +548,9 @@ namespace ACFramework
 			    { 
 				    value.setViewpoint( new cVector3( 0.0f, 0.3f, -1.0f ), _border.Center); 
 					//Always make some setViewpoint call simply to put in a default zoom.
-				    value.zoom( 0.2f ); //Wideangle 
+				    value.zoom( 0.35f ); //Wideangle 
 				    cListenerViewerRide prider = ( cListenerViewerRide )( value.Listener); 
-				    prider.Offset = (new cVector3( -1.5f, 0.0f, 2.5f)); /* This offset is in the coordinate
+				    prider.Offset = (new cVector3( -1.5f, 0.0f, 1.0f)); /* This offset is in the coordinate
 				    system of the player, where the negative X axis is the negative of the
 				    player's tangent direction, which means stand right behind the player. */ 
 			    } 
@@ -763,36 +587,13 @@ namespace ACFramework
 
             if (wentThrough && (Age - startNewRoom) > 2.0f)
             {
+                MessageBox.Show("What an idiot.");
                 wentThrough = false;
             }
 
             if (doorcollision == true)
             {
-                if (roomNumber == 1)
-                {
-                    setRoom1();
-                    roomNumber = 2;
-                }
-                else if (roomNumber == 2)
-                {
-                    setRoom2();
-                    roomNumber = 3;
-                }
-                else if (roomNumber == 3)
-                {
-                    setRoom3();
-                    roomNumber = 4;
-                }
-                else if (roomNumber == 4)
-                {
-                    setRoom4();
-                    roomNumber = 5;
-                }
-                else
-                {
-                    MessageBox.Show("This door seems to be locked.");
-                }
-           
+                setRoom1();
                 doorcollision = false;
             }
 		} 

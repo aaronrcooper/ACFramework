@@ -259,7 +259,7 @@ namespace ACFramework
         {
             if (pownergame!=null)
             {
-                BulletClass = new cCritterBullet();
+                BulletClass = new cCritterBulletRubber();
                 //Sets the boss sprite
                 Sprite = new cSpriteQuake(ModelsMD2.Vegeta);
                 setHealth(20);
@@ -267,20 +267,16 @@ namespace ACFramework
                 Armed = true;   //Allows the character to use bullets
                 MaxSpeed = cGame3D.MAXPLAYERSPEED;  //sets max speed
                 AbsorberFlag = true;    //Keeps boss from being buffered out
-                ListenerAcceleration = 160.0f;  //hopper can overcome gravity, only affects hop
                 addForce(new cForceGravity(50.0f)); //gravity
-                //addForce(new cForceDrag(100.0f));
                 AttitudeToMotionLock = false;
                 //First param determines direction facing (forward/backward)
                 Attitude = new cMatrix3(new cVector3(0.0f, 0.0f, 1.0f), new cVector3(1.0f, 0.0f, 0.0f),
                     new cVector3(0.0f, 1.0f, 0.0f), Position);
                 AimToAttitudeLock = true;   //aims in the direction of the attitude
                 setMoveBox(_movebox);
-                //setMoveBox(new cRealBox3(64.0f, 16.0f, 64.0f));
                 moveTo(new cVector3(_movebox.Midx, _movebox.Loy,
                     _movebox.Midz+ 2.0f));
                 //Sets the direction the boss is moving to the direction they are facing
-                //rotateAttitude(Tangent.rotationAngle(AttitudeTangent));
                 addForce(new cForceObjectSeek(Player, 3.0f));
                 _waitshoot = 1.0f;
                 setMoveBox(_movebox);

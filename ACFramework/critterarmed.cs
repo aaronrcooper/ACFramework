@@ -223,6 +223,33 @@ namespace ACFramework
 
 
     } 
+
+    class cCritterBulletKamehameha : cCritterBullet
+    {
+        public cCritterBulletKamehameha()
+        {
+            _shooterindex = cBiota.NOINDEX;
+            _hitstrength = 2;
+            _dieatedges = true;
+            _defaultprismdz = cSprite.BULLETPRISMDZ;
+            _value = 0;
+            _usefixedlifetime = true;
+            _fixedlifetime = FIXEDLIFETIME;
+            _collidepriority = cCollider.CP_BULLET; /* Don't use the setCollidePriority mutator, as that
+			forces a call to pgame()->buildCollider(); */
+            _maxspeed = cCritterBullet.MAXSPEED;
+            Speed = cCritterBullet.BULLETSPEED;
+            cSpriteSphere bulletsprite = new cSpriteSphere(cCritter.BULLETRADIUS * 2, 6, 6);
+            bulletsprite.FillColor = Color.Aqua;
+            Sprite = bulletsprite; /* Also sets cSprite._prismdz to cCritter._defaultprismdz, which we
+			set to CritterWall.BULLETPRISMDZ above. */
+        }
+
+        public bool isKindOf(string str)
+        {
+            return str == "cCritterBulletKamehameha" || base.IsKindOf(str);
+        }
+    }
 	
 	class cCritterBulletRubber : cCritterBullet 
 	{ 

@@ -96,13 +96,18 @@ namespace ACFramework
 			{
                 Framework.snd.play(Sound.Goopy); 
 				addScore( 10 ); 
-			} 
-			else 
+			}
+            else if (pcritter.IsKindOf("cCritter3DBoss"))
+            {
+                damage(2);
+            }
+            else 
 			{ 
 				damage( 1 );
-                Framework.snd.play(Sound.Crunch); 
-			} 
-			pcritter.die(); 
+                Framework.snd.play(Sound.Crunch);
+                pcritter.die();
+
+            } 
 			return true; 
 		}
 
@@ -277,6 +282,7 @@ namespace ACFramework
                 //rotateAttitude(Tangent.rotationAngle(AttitudeTangent));
                 addForce(new cForceObjectSeek(Player, 1.0f));
                 _waitshoot = 1.0f;
+                setMoveBox(_movebox);
             }
         }
 
@@ -316,6 +322,10 @@ namespace ACFramework
             cCritter3DBoss c = new cCritter3DBoss();
             c.copy(this);
             return c;
+        }
+        public override bool IsKindOf(string str)
+        {
+            return str == "cCritter3DBoss" || base.IsKindOf(str);
         }
     }
 

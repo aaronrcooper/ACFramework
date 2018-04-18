@@ -44,6 +44,8 @@ namespace ACFramework
     class cCritterMovingWall : cCritterWall
     {
         private bool backwards, down, up;
+        private const int PAUSE_LENGTH = 500;
+        private int paused;//will pause the moving of the wall for a short period of time
         public float MOVING_SPEED = 0.01f;
         public cCritterMovingWall(cVector3 enda, cVector3 endb, float thickness, float height, cGame pownergame)
             : base(enda, endb, thickness, height, pownergame)
@@ -51,10 +53,19 @@ namespace ACFramework
             backwards = false;
             down = false;
             up = false;
+            paused = -1;
         }
         public void moveWall()
         {
-           if(!backwards && !down && !up)//moving forward
+            if (paused > 0)
+            {
+                paused--;
+                if (paused < 0)
+                {
+                    up = true;
+                }
+            }
+            else if (!backwards && !down && !up)//moving forward
             {
                 //move the wall forward by 1 z value
                 moveTo(Position.add(new cVector3(0.0f, 0.0f, MOVING_SPEED)));
@@ -70,26 +81,37 @@ namespace ACFramework
                 if(Position.Z < -15.0f)
                 {
                     backwards = false;
+                    up = false;
+                    down = true;
                 }
             }
             else if(down)//moving down
             {
                 moveTo(Position.add(new cVector3(0.0f, -MOVING_SPEED, 0.0f)));
-                if(Position.Y < 2.0f)
+                if(Position.Y < -7.0f)
                 {
                     up = true;
                     down = false;
+                    paused = PAUSE_LENGTH;
                 }
             }
             else if(up)//moving up
             {
                 moveTo(Position.add(new cVector3(0.0f, MOVING_SPEED, 0.0f)));
-                if(Position.Y > 9.0f)
+                if(Position.Y > 5.0f && Position.Z > 15.0f)
                 {
                     up = false;
-                    down = true;
+                    down = false;
+                    backwards = true;
+                }
+                if(Position.Y > 5.0f && Position.Z < -15.0f)
+                {
+                    up = false;
+                    down = false;
+                    backwards = false;
                 }
             }
+
 
         }
         public override bool IsKindOf(string str)
@@ -125,7 +147,7 @@ namespace ACFramework
 			ListenerAcceleration = 160.0f; //So Hopper can overcome gravity.  Only affects hop.
 		
             // YHopper hop strength 12.0
-			Listener = new cListenerQuakeScooterYHopper( 0.2f, 20.0f ); 
+			Listener = new cListenerQuakeScooterYHopper( 0.2f, 15.0f ); 
             // the two arguments are walkspeed and hop strength -- JC
             
             addForce( new cForceGravity( 50.0f )); /* Uses  gravity. Default strength is 25.0.
@@ -556,9 +578,9 @@ namespace ACFramework
             float ycenter = -_border.YRadius + height / 2.0f;
             float wallthickness = cGame3D.WALLTHICKNESS;
             cCritterWall pwall = new cCritterWall(
-                new cVector3(_border.Midx + 2.0f, ycenter, zpos),
+                new cVector3(_border.Lox, ycenter, zpos),
                 new cVector3(_border.Hix, ycenter, zpos),
-                height, //thickness param for wall's dy which goes perpendicular to the 
+                _border.YSize - 4, //thickness param for wall's dy which goes perpendicular to the 
                         //baseline established by the frist two args, up the screen 
                 wallthickness, //height argument for this wall's dz  goes into the screen 
                 this);

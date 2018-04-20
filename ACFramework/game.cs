@@ -149,7 +149,7 @@ namespace ACFramework
                 setPlayer(pdummyplayer);
             }
         }
-
+        
         //Need so that the cBiota default constructor can make an owner game.
 
         public virtual void removeReferencesTo(cCritter pdeadcritter)
@@ -594,6 +594,7 @@ namespace ACFramework
 	 		walls, in case you have walls. */
             for (int i = 0; i < _seedcount; i++)
             {
+                //newcritter = new cCritter3DBoss(this);
                 newcritter = new cCritter(this); /* The this argument adds the critter to the game,
 				and sets its _movebox and _dragbox to the game _border, sets its _wrapflag
 				to match the game's _wrapflag. */

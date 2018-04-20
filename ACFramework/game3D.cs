@@ -252,6 +252,7 @@ namespace ACFramework
     class cCritter3DBoss :cCritterArmedRobot
     {
         public static readonly new float DENSITY = 5.0f;
+        Random rand;
 
 
         public cCritter3DBoss(cGame pownergame = null) :
@@ -259,6 +260,7 @@ namespace ACFramework
         {
             if (pownergame!=null)
             {
+                rand = new Random();
                 BulletClass = new cCritterBulletRubber();
                 //Sets the boss sprite
                 Sprite = new cSpriteQuake(ModelsMD2.Vegeta);
@@ -278,7 +280,7 @@ namespace ACFramework
                     _movebox.Midz+ 2.0f));
                 //Sets the direction the boss is moving to the direction they are facing
                 addForce(new cForceObjectSeek(Player, 3.0f));
-                _waitshoot = 1.0f;
+                _waitshoot = (float) rand.NextDouble();
                 setMoveBox(_movebox);
             }
         }
@@ -305,6 +307,7 @@ namespace ACFramework
         {
             base.update(pactiveview, dt); //Always call this first
             rotateAttitude(Tangent.rotationAngle(AttitudeTangent));
+            _waitshoot = (float)rand.NextDouble();
         }
 
         public override void copy(cCritter pcritter)

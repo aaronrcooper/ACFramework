@@ -89,19 +89,18 @@ namespace ACFramework
             _baseAccessControl = 0;
             if (!collided) 
 				return false;
-		/* If you're here, you collided.  We'll treat all the guys the same -- the collision
-	 with a Treasure is different, but we let the Treasure contol that collision. */ 
-			if ( playerhigherthancritter ) 
-			{
-                Framework.snd.play(Sound.Goopy); 
-				addScore( 10 ); 
-			} 
-			else 
-			{ 
-				damage( 1 );
-                Framework.snd.play(Sound.Crunch); 
-			} 
-			pcritter.die(); 
+            /* If you're here, you collided.  We'll treat all the guys the same -- the collision
+         with a Treasure is different, but we let the Treasure contol that collision. */
+            Random rand = new Random();
+            int random = rand.Next(3);
+            if (random == 0)
+                Framework.snd.play(Sound.WorkHard);
+            else if (random == 1)
+                Framework.snd.play(Sound.Samuri);
+           else      
+                Framework.snd.play(Sound.Shout);
+            addScore(10);
+            pcritter.die(); 
 			return true; 
 		}
 
@@ -241,31 +240,27 @@ namespace ACFramework
             }
         }
 	} 
-	
+
+    
 	class cCritterTreasure : cCritter 
 	{   // Try jumping through this hoop
 		
 		public cCritterTreasure( cGame pownergame ) : 
 		base( pownergame ) 
 		{ 
-			/* The sprites look nice from afar, but bitmap speed is really slow
-		when you get close to them, so don't use this. */ 
 			cSpriteSphere sphere = new cSpriteSphere(1,32,32); 
             sphere.FillColor = Color.Crimson;
 			sphere.Filled = true;
 			sphere.LineWidthWeight = 0.5f;
 			Sprite = sphere; 
-			_collidepriority = cCollider.CP_PLAYER + 1; /* Let this guy call collide on the
-			player, as his method is overloaded in a special way. */ 
-			rotate( new cSpin( (float) Math.PI / 2.0f, new cVector3(0.0f, 0.0f, 1.0f) )); /* Trial and error shows this
-			rotation works to make it face the z diretion. */ 
+			_collidepriority = cCollider.CP_PLAYER + 1; 
+			rotate( new cSpin( (float) Math.PI / 2.0f, new cVector3(0.0f, 0.0f, 1.0f) ));
 			setRadius( cGame3D.TREASURERADIUS ); 
 			//FixedFlag = true; 
 			moveTo( new cVector3( _movebox.Midx, _movebox.Loy - 2.0f, 
 				_movebox.Midz - 1.5f * cGame3D.TREASURERADIUS )); 
 		} 
 
-		
 		public override bool collide( cCritter pcritter ) 
 		{ 
 			if ( contains( pcritter )) //disk of pcritter is wholly inside my disk 
@@ -281,7 +276,6 @@ namespace ACFramework
 				return false; 
 		} 
 
-		//Checks if pcritter inside.
 	
 		public override int collidesWith( cCritter pothercritter ) 
 		{ 
@@ -291,8 +285,7 @@ namespace ACFramework
 				return cCollider.DONTCOLLIDE; 
 		} 
 
-		/* Only collide
-			with cCritter3DPlayer. */ 
+	
 
        public override bool IsKindOf( string str )
         {
@@ -307,10 +300,10 @@ namespace ACFramework
             }
         }
 	}
-
+    
+    
     class cCritterDragonball : cCritter
-    {   // Try jumping through this hoop
-
+    {  
         public cCritterDragonball(cGame pownergame,float pX,float pY,float pZ) :
         base(pownergame)
         {
@@ -324,54 +317,22 @@ namespace ACFramework
             sphere.Filled = true;
             sphere.LineWidthWeight = 0.5f;
             Sprite = sphere;
-            _collidepriority = cCollider.CP_PLAYER + 1; /* Let this guy call collide on the
-			player, as his method is overloaded in a special way. */
-            rotate(new cSpin((float)Math.PI / 2.0f, new cVector3(0.0f, 0.0f, 1.0f))); /* Trial and error shows this
-			rotation works to make it face the z diretion. */
-            setRadius(.2f);
-            //FixedFlag = true; 
+            _collidepriority = cCollider.CP_PLAYER + -1;
+            rotate(new cSpin((float)Math.PI / 2.0f, new cVector3(0.0f, 0.0f, 1.0f))); 
+            setRadius(.3f);
             moveTo(new cVector3(x, y, z));
         }
 
-
-        public override bool collide(cCritter pcritter)
-        {
-            if (contains(pcritter)) //disk of pcritter is wholly inside my disk 
-            {
-                Framework.snd.play(Sound.Clap);
-                pcritter.addScore(100);
-                pcritter.addHealth(1);
-                pcritter.moveTo(new cVector3(_movebox.Midx, _movebox.Loy + 1.0f,
-                    _movebox.Hiz - 3.0f));
-                return true;
-            }
-            else
-                return false;
-        }
-
-        //Checks if pcritter inside.
-
-        public override int collidesWith(cCritter pothercritter)
-        {
-            if (pothercritter.IsKindOf("cCritter3DPlayer"))
-                return cCollider.COLLIDEASCALLER;
-            else
-                return cCollider.DONTCOLLIDE;
-        }
-
-        /* Only collide
-			with cCritter3DPlayer. */
-
         public override bool IsKindOf(string str)
         {
-            return str == "cCritterTreasure" || base.IsKindOf(str);
+            return str == "cCritterDragonball" || base.IsKindOf(str);
         }
 
         public override string RuntimeClass
         {
             get
             {
-                return "cCritterTreasure";
+                return "cCritterDragonball";
             }
         }
     }
@@ -385,10 +346,9 @@ namespace ACFramework
 		public static readonly float PLAYERRADIUS = 0.2f; 
 		public static readonly float MAXPLAYERSPEED = 30.0f; 
 		private cCritterDragonball _pdragonball; 
-		public static readonly float MAXPLAYERSPEED = 30.0f;
+		//public static readonly float MAXPLAYERSPEED = 30.0f;
         public static readonly float BORDER_XZ = 50.0f;//length and width of rooms
         public static readonly float BORDER_Y = 16.0f;//height of rooms
-		private cCritterTreasure _ptreasure; 
 		private bool doorcollision;
         private bool wentThrough = false;
         private float startNewRoom;

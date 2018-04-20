@@ -996,7 +996,7 @@ namespace ACFramework
 		public override void feellistener( float dt ) 
 		{ 
 			base.feellistener( dt );  // will call cCritter feellistener
-            if (cKeyInfo.keystateage(Framework.Keydev[vk.Space]))
+            //if (cKeyInfo.keystateage(Framework.Keydev[vk.Space]))
             if (!shotDone) // if space key or left mouse button is pressed, turn off shooting until not pressed
                 _bshooting = false; 
             if (shotDone && ( Framework.Keydev[vk.Space] || Framework.Leftclick )) 

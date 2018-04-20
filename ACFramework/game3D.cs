@@ -566,12 +566,9 @@ namespace ACFramework
 				5.0f, 2, this ); 
 			cSpriteTextureBox pspritedoor = 
 				new cSpriteTextureBox( pdwall.Skeleton, BitmapRes.Door ); 
-<<<<<<< HEAD
 			pdwall.Sprite = pspritedoor; 
 		}
         
-=======
->>>>>>> origin/3dCharacterBoss
 
         public void setRoom1( )
         {
@@ -692,10 +689,6 @@ namespace ACFramework
             shouldMoveWall = true;
 
         }
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/3dCharacterBoss
 		public override void seedCritters() 
 		{
 			Biota.purgeCritters( "cCritterBullet" ); 

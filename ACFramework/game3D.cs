@@ -353,9 +353,8 @@ namespace ACFramework
         private bool wentThrough = false;
         private float startNewRoom;
         private int roomNumber = 1;//keeps track of the room that the player is currently in
-        Random rnd = new Random();
-
-        public cGame3D() 
+		
+		public cGame3D() 
 		{
 			doorcollision = false; 
 			_menuflags &= ~ cGame.MENU_BOUNCEWRAP; 
@@ -382,11 +381,12 @@ namespace ACFramework
 			WrapFlag = cCritter.BOUNCE; 
 			_seedcount = 7; 
 			setPlayer( new cCritter3DPlayer( this ));
+            Random rnd = new Random();
             float y = -10;
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 10; i++)
             {
-                float x = rnd.Next(-20, 20);
-                float z = rnd.Next(-20, 20);
+                float x = rnd.Next(-40, 40);
+                float z = rnd.Next(-40, 40);
                 _pdragonball = new cCritterDragonball(this, x, y, z);
             }    
 			SkyBox.setSideTexture(cRealBox3.HIY, BitmapRes.Sky); //ceiling
@@ -512,13 +512,6 @@ namespace ACFramework
                 this);
             cSpriteTextureBox pUpstairsWallSprite = new cSpriteTextureBox(pUpstairsWall.Skeleton, BitmapRes.Wall3, 16);
             pUpstairsWall.Sprite = pUpstairsWallSprite;
-            float y1 = -10;
-            for (int i = 0; i < 6; i++)
-            {
-                float x = rnd.Next(-20, 20);
-                float z = rnd.Next(-20, 20);
-                _pdragonball = new cCritterDragonball(this, x, y1, z);
-            }
         }
         public void setRoom2()
         {
@@ -563,13 +556,6 @@ namespace ACFramework
             cSpriteTextureBox pspritedoor =
                 new cSpriteTextureBox(pdwall.Skeleton, BitmapRes.Door);
             pdwall.Sprite = pspritedoor;
-            float y1 = -10;
-            for (int i = 0; i < 6; i++)
-            {
-                float x = rnd.Next(-20, 20);
-                float z = rnd.Next(-20, 20);
-                _pdragonball = new cCritterDragonball(this, x, y1, z);
-            }         
         }
 
         public void setRoom3()

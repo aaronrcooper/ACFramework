@@ -353,7 +353,8 @@ namespace ACFramework
         private bool wentThrough = false;
         private float startNewRoom;
         private int roomNumber = 1;//keeps track of the room that the player is currently in
-		
+        Random rnd = new Random();
+
 		public cGame3D() 
 		{
 			doorcollision = false; 
@@ -379,16 +380,8 @@ namespace ACFramework
 			SkyBox.setSideTexture( cRealBox3.HIY, BitmapRes.Sky ); //ceiling 
 		
 			WrapFlag = cCritter.BOUNCE; 
-			_seedcount = 7; 
-			setPlayer( new cCritter3DPlayer( this ));
-            Random rnd = new Random();
-            float y = -10;
-            for (int i = 0; i < 10; i++)
-            {
-                float x = rnd.Next(-40, 40);
-                float z = rnd.Next(-40, 40);
-                _pdragonball = new cCritterDragonball(this, x, y, z);
-            }    
+			_seedcount = 7;
+            setPlayer(new cCritter3DPlayer(this));
 			SkyBox.setSideTexture(cRealBox3.HIY, BitmapRes.Sky); //ceiling
 			SkyBox.setSideTexture( cRealBox3.LOY, BitmapRes.Concrete ); //floor  
 			SkyBox.setSideTexture( cRealBox3.LOX, BitmapRes.Dragonball_bg1_90r ); //Left Wall - flip 90r
@@ -430,15 +423,21 @@ namespace ACFramework
                 this);
             cSpriteTextureBox pNEWallSprite = new cSpriteTextureBox(pNEWall.Skeleton, BitmapRes.Wall3, 16);
             pNEWall.Sprite = pNEWallSprite;
-
+            float y = -10;
+            for (int i = 0; i < 6; i++)
+            {
+                float x = rnd.Next(-20, 20);
+                float z = rnd.Next(-20, 20);
+                _pdragonball = new cCritterDragonball(this, x, y, z);
+            }
             cCritterDoor pdwall = new cCritterDoor( 
 				new cVector3( _border.Midx, _border.Loy, _border.Loz-0.9f ), 
 				new cVector3( _border.Midx, _border.Midy, _border.Loz-0.9f ), 
 				5.0f, 2, this ); 
 			cSpriteTextureBox pspritedoor = 
-				new cSpriteTextureBox( pdwall.Skeleton, BitmapRes.Door ); 
-			pdwall.Sprite = pspritedoor; 
-		} 
+				new cSpriteTextureBox( pdwall.Skeleton, BitmapRes.Door );
+            pdwall.Sprite = pspritedoor;
+        } 
 
         public void setRoom1( )
         {
@@ -512,6 +511,13 @@ namespace ACFramework
                 this);
             cSpriteTextureBox pUpstairsWallSprite = new cSpriteTextureBox(pUpstairsWall.Skeleton, BitmapRes.Wall3, 16);
             pUpstairsWall.Sprite = pUpstairsWallSprite;
+            float y = -10;
+            for (int i = 0; i < 6; i++)
+            {
+                float x = rnd.Next(-20, 20);
+                float z = rnd.Next(-20, 20);
+                _pdragonball = new cCritterDragonball(this, x, y, z);
+            }
         }
         public void setRoom2()
         {
@@ -556,6 +562,13 @@ namespace ACFramework
             cSpriteTextureBox pspritedoor =
                 new cSpriteTextureBox(pdwall.Skeleton, BitmapRes.Door);
             pdwall.Sprite = pspritedoor;
+            float y = -10;
+            for (int i = 0; i < 6; i++)
+            {
+                float x = rnd.Next(-20, 20);
+                float z = rnd.Next(-20, 20);
+                _pdragonball = new cCritterDragonball(this, x, y, z);
+            }
         }
 
         public void setRoom3()
@@ -601,6 +614,13 @@ namespace ACFramework
             cSpriteTextureBox pspritedoor =
                 new cSpriteTextureBox(pdwall.Skeleton, BitmapRes.Door);
             pdwall.Sprite = pspritedoor;
+            float y = -10;
+            for (int i = 0; i < 6; i++)
+            {
+                float x = rnd.Next(-20, 20);
+                float z = rnd.Next(-20, 20);
+                _pdragonball = new cCritterDragonball(this, x, y, z);
+            }
         }
         public void setRoom4()
         {
@@ -645,8 +665,13 @@ namespace ACFramework
             cSpriteTextureBox pspritedoor =
                 new cSpriteTextureBox(pdwall.Skeleton, BitmapRes.Door);
             pdwall.Sprite = pspritedoor;
-
-
+            float y = -10;
+            for (int i = 0; i < 6; i++)
+            {
+                float x = rnd.Next(-20, 20);
+                float z = rnd.Next(-20, 20);
+                _pdragonball = new cCritterDragonball(this, x, y, z);
+            }
         }
 		
 		public override void seedCritters() 

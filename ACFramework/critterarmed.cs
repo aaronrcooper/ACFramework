@@ -223,6 +223,33 @@ namespace ACFramework
 
 
     } 
+
+    class cCritterBulletKamehameha : cCritterBullet
+    {
+        public cCritterBulletKamehameha()
+        {
+            _shooterindex = cBiota.NOINDEX;
+            _hitstrength = 2;
+            _dieatedges = true;
+            _defaultprismdz = cSprite.BULLETPRISMDZ;
+            _value = 0;
+            _usefixedlifetime = true;
+            _fixedlifetime = FIXEDLIFETIME;
+            _collidepriority = cCollider.CP_BULLET; /* Don't use the setCollidePriority mutator, as that
+			forces a call to pgame()->buildCollider(); */
+            _maxspeed = cCritterBullet.MAXSPEED;
+            Speed = cCritterBullet.BULLETSPEED;
+            cSpriteSphere bulletsprite = new cSpriteSphere(cCritter.BULLETRADIUS * 2, 6, 6);
+            bulletsprite.FillColor = Color.Aqua;
+            Sprite = bulletsprite; /* Also sets cSprite._prismdz to cCritter._defaultprismdz, which we
+			set to CritterWall.BULLETPRISMDZ above. */
+        }
+
+        public bool isKindOf(string str)
+        {
+            return str == "cCritterBulletKamehameha" || base.IsKindOf(str);
+        }
+    }
 	
 	class cCritterBulletRubber : cCritterBullet 
 	{ 
@@ -877,7 +904,8 @@ namespace ACFramework
 		}
 
 
-	} 
+	}
+
 	
 	class cCritterArmedPlayer : cCritterArmed 
 	{ 
@@ -968,8 +996,8 @@ namespace ACFramework
 		public override void feellistener( float dt ) 
 		{ 
 			base.feellistener( dt );  // will call cCritter feellistener
-
-            if (!shotDone) // if space key or left mouse button is pressed, turn off shooting until not preesed
+            //if (cKeyInfo.keystateage(Framework.Keydev[vk.Space]))
+            if (!shotDone) // if space key or left mouse button is pressed, turn off shooting until not pressed
                 _bshooting = false; 
             if (shotDone && ( Framework.Keydev[vk.Space] || Framework.Leftclick )) 
             { // if previous shot is done, turn on shooting when space key or left mouse button is pressed
@@ -1007,7 +1035,7 @@ namespace ACFramework
 		//		_velocity.setZero(); 
 			} 
 			return base.damage( hitstrength ); // will call cCritter damage 
-		} 
+		}
 
         /// <summary>
         /// If player has collided with a nonwall critter, and _sensitive has been set to true, this will

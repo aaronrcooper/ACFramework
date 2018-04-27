@@ -131,6 +131,8 @@ namespace ACFramework
 	
 	class cCritter3DPlayer : cCritterArmedPlayer 
 	{ 
+        private cGame owner;
+        private bool gohanSpawned;
         public cCritter3DPlayer( cGame pownergame ) 
             : base( pownergame ) 
 		{ 
@@ -140,17 +142,17 @@ namespace ACFramework
 			Sprite.SpriteAttitude = cMatrix3.scale( 2, 0.8f, 0.4f ); 
 			setRadius( 0.42f ); //Default cCritter.PLAYERRADIUS is 0.4.  
 			setHealth( 10 ); 
-			moveTo( _movebox.LoCorner.add( new cVector3( 0.0f, 0.0f, 2.0f ))); 
+			moveTo( _movebox.Center.add( new cVector3( 0.0f, 0.0f, 16.0f ))); 
 			WrapFlag = cCritter.CLAMP; //Use CLAMP so you stop dead at edges.
 			Armed = true; //Let's use bullets.
 			MaxSpeed =  cGame3D.MAXPLAYERSPEED + 20; 
 			AbsorberFlag = true; //Keeps player from being buffeted about.
 			ListenerAcceleration = 160.0f; //So Hopper can overcome gravity.  Only affects hop.
-		
+            owner = pownergame;
             // YHopper hop strength 12.0
-			Listener = new cListenerQuakeScooterYHopper( 0.2f, 15.0f ); 
+			Listener = new cListenerQuakeScooterYHopper( 0.2f, 15.0f );
             // the two arguments are walkspeed and hop strength -- JC
-            
+            gohanSpawned = false;
             addForce( new cForceGravity( 50.0f )); /* Uses  gravity. Default strength is 25.0.
 			Gravity	will affect player using cListenerHopper. */ 
 			AttitudeToMotionLock = false; //It looks nicer is you don't turn the player with motion.
@@ -165,7 +167,8 @@ namespace ACFramework
         } 
 
         public override bool collide( cCritter pcritter ) 
-		{ 
+		{
+            
 			bool playerhigherthancritter = Position.Y - Radius > pcritter.Position.Y; 
 		/* If you are "higher" than the pcritter, as in jumping on it, you get a point
 	and the critter dies.  If you are lower than it, you lose health and the
@@ -188,8 +191,29 @@ namespace ACFramework
             {
                 damage(2);
             }
-            else 
-			{ 
+            else if(pcritter.IsKindOf("cCritterWank"))
+            {
+                if (gohanSpawned)
+                {
+                    return false;
+                }
+                else
+                {
+                    //spawn little goku
+                    cCritterGohan gohan = new cCritterGohan(owner);
+                    gohan.moveTo(new cVector3(20.0f, 0.0f, -22.0f));
+                    gohanSpawned = true;
+                    MessageBox.Show("Your son, Gohan, has been born.");
+                    return true;
+                }
+            }
+            else if(pcritter.IsKindOf("cCritterGohan"))
+            {
+                //play gohan sound
+                return true;
+            }
+            else
+            { 
 				damage( 1 );
                 Framework.snd.play(Sound.Crunch);
                 pcritter.die();
@@ -334,18 +358,18 @@ namespace ACFramework
                 return "cCritter3Dcharacter";
             }
         }
-	} 
-	
-    class cCritter3DBoss :cCritterArmedRobot
+	}
+
+    class cCritter3DBoss : cCritterArmedRobot
     {
         public static readonly new float DENSITY = 5.0f;
         Random rand;
 
 
         public cCritter3DBoss(cGame pownergame = null) :
-            base (pownergame)
+            base(pownergame)
         {
-            if (pownergame!=null)
+            if (pownergame != null)
             {
                 rand = new Random();
                 BulletClass = new cCritterBulletRubber();
@@ -364,10 +388,10 @@ namespace ACFramework
                 AimToAttitudeLock = true;   //aims in the direction of the attitude
                 setMoveBox(_movebox);
                 moveTo(new cVector3(_movebox.Midx, _movebox.Loy,
-                    _movebox.Midz+ 2.0f));
+                    _movebox.Midz + 2.0f));
                 //Sets the direction the boss is moving to the direction they are facing
                 addForce(new cForceObjectSeek(Player, 3.0f));
-                _waitshoot = (float) rand.NextDouble();
+                _waitshoot = (float)rand.NextDouble();
                 setMoveBox(_movebox);
             }
         }
@@ -415,8 +439,151 @@ namespace ACFramework
             return str == "cCritter3DBoss" || base.IsKindOf(str);
         }
     }
+    class cCritter3DCharacterEnemy : cCritterArmedRobot
+    {
+        public cCritter3DCharacterEnemy(cGame pownergame) 
+            : base( pownergame ) 
+        {
+            Sprite = new cSpriteQuake(ModelsMD2.Vegeta);
+            WrapFlag = cCritter.CLAMP;  //Prevents boss from going through walls
+            Armed = true;   //Allows the character to use bullets
+            MaxSpeed = cGame3D.MAXPLAYERSPEED;  //sets max speed
+            AbsorberFlag = true;    //Keeps boss from being buffered out
+            addForce(new cForceGravity(50.0f)); //gravity
+            AttitudeToMotionLock = false;
+        }
+        public override void update(ACView pactiveview, float dt)
+        {
+            base.update(pactiveview, dt); //Always call this first
+            if ((_outcode & cRealBox3.BOX_HIZ) != 0) /* use bitwise AND to check if a flag is set. */
+                delete_me(); //tell the game to remove yourself if you fall up to the hiz.
+        }
 
-	class cCritterTreasure : cCritter 
+        public override void die()
+        {
+            Player.addScore(Value);
+            base.die();
+        }
+        public override bool collide(cCritter pother)
+        {
+            if (pother.IsKindOf("cCritter3DPlayer"))
+            {
+                //move away from player
+                addForce(new cForceClassEvade(0.3f, 0.3f));
+                return true;
+            }
+            return false;
+        }
+
+        public override bool IsKindOf(string str)
+        {
+            return str == "cCritter3DCharacterEnemy" || base.IsKindOf(str);
+        }
+
+        public override string RuntimeClass
+        {
+            get
+            {
+                return "cCritter3DCharacterEnemy";
+            }
+        }
+    }
+
+    class cCritterWank : cCritter
+    {
+        private short stateBegF = 0;
+        private short stateEndF = 39;
+        public cCritterWank(cGame pownergame)
+            : base(pownergame)
+        {
+            //Sets the sprite
+            Sprite = new cSpriteQuake(ModelsMD2.Wank);
+            WrapFlag = cCritter.CLAMP;  //Prevent from going through walls
+            MaxSpeed = cGame3D.MAXPLAYERSPEED;  //sets max speed
+            AbsorberFlag = true;    //Keep from being buffered out
+            addForce(new cForceGravity(50.0f)); //gravity
+            AttitudeToMotionLock = false;
+            //First param determines direction facing (forward/backward)
+            Attitude = new cMatrix3(new cVector3(0.0f, 0.0f, 1.0f), new cVector3(1.0f, 0.0f, 0.0f),
+                new cVector3(0.0f, 1.0f, 0.0f), Position);
+            Sprite.setstate(State.Other, stateBegF, stateEndF, StateType.Repeat);
+
+        }
+
+        public override bool collide(cCritter pother)
+        {
+            if(pother.IsKindOf("cCritter3DPlayer"))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public override bool IsKindOf(string str)
+        {
+            return str =="cCritterWank" || base.IsKindOf(str);
+        }
+
+        public override string RuntimeClass
+        {
+            get
+            {
+                return "cCritterWank";
+            }
+        }
+    }
+
+
+    class cCritterGohan : cCritterArmed
+    {
+        private short stateBegF = 95;
+        private short stateEndF = 112;
+        public cCritterGohan(cGame pownergame)
+            : base(pownergame)
+        {
+            //Sets the sprite
+            Sprite = new cSpriteQuake(ModelsMD2.Gohan);
+            setRadius(0.3f);
+            WrapFlag = cCritter.CLAMP;  //Prevent from going through walls
+            MaxSpeed = cGame3D.MAXPLAYERSPEED;  //sets max speed
+            AbsorberFlag = true;    //Keep from being buffered out
+            addForce(new cForceGravity(50.0f)); //gravity
+            AttitudeToMotionLock = false;
+            //First param determines direction facing (forward/backward)
+            Attitude = new cMatrix3(new cVector3(0.0f, 0.0f, 1.0f), new cVector3(1.0f, 0.0f, 0.0f),
+                new cVector3(0.0f, 1.0f, 0.0f), Position);
+            Sprite.setstate(State.Other, stateBegF, stateEndF, StateType.Repeat);
+            //First param determines direction facing (forward/backward)
+            Attitude = new cMatrix3(new cVector3(0.0f, 0.0f, 1.0f), new cVector3(1.0f, 0.0f, 0.0f),
+                new cVector3(0.0f, 1.0f, 0.0f), Position);
+            addForce(new cForceObjectSeek(Player, 1.0f));
+            AimToAttitudeLock = true;   //aims in the direction of the attitude
+        }
+
+        public override bool collide(cCritter pother)
+        {
+            if (pother.IsKindOf("cCritter3DPlayer"))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public override bool IsKindOf(string str)
+        {
+            return str == "cCritterGohan" || base.IsKindOf(str);
+        }
+
+        public override string RuntimeClass
+        {
+            get
+            {
+                return "cCritterGohan";
+            }
+        }
+    }
+
+    class cCritterTreasure : cCritter 
 	{   // Try jumping through this hoop
 		
 		public cCritterTreasure( cGame pownergame ) : 
@@ -526,7 +693,7 @@ namespace ACFramework
 			SkyBox.setSideTexture( cRealBox3.LOZ, BitmapRes.Dragonball_bg1 ); //Back Wall  
 
             WrapFlag = cCritter.BOUNCE; 
-			_seedcount = 1; 
+			_seedcount = 0; 
 			setPlayer( new cCritter3DPlayer( this )); 
 		
 			/* In this world the x and y go left and up respectively, while z comes out of the screen.
@@ -566,8 +733,12 @@ namespace ACFramework
 				5.0f, 2, this ); 
 			cSpriteTextureBox pspritedoor = 
 				new cSpriteTextureBox( pdwall.Skeleton, BitmapRes.Door ); 
-			pdwall.Sprite = pspritedoor; 
-		}
+			pdwall.Sprite = pspritedoor;
+
+            cCritterWank wank = new cCritterWank(this);
+            wank.moveTo(new cVector3(_border.Hix - 4.0f, 0.0f, _border.Loz + 4.0f));
+            
+        }
         
 
         public void setRoom1( )
@@ -642,6 +813,9 @@ namespace ACFramework
                 this);
             cSpriteTextureBox pUpstairsWallSprite = new cSpriteTextureBox(pUpstairsWall.Skeleton, BitmapRes.Wall3, 16);
             pUpstairsWall.Sprite = pUpstairsWallSprite;
+            cCritter3DCharacterEnemy enemy = new cCritter3DCharacterEnemy(this);
+            enemy.moveTo(new cVector3(0.0f, -4.0f, 0.0f));
+            enemy.setRadius(1.3f);
         }
         public void setRoom2()
         {

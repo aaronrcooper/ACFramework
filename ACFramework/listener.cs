@@ -347,6 +347,15 @@ namespace ACFramework
             bool pageup = Framework.Keydev[vk.PageUp];
             bool pagedown = Framework.Keydev[vk.PageDown];
             bool end = Framework.Keydev[vk.End];
+            bool K = Framework.Keydev[vk.K];
+
+            if (K)
+            {
+                if (((cCritter3DPlayer)pcritter).Mode != 'K')
+                    ((cCritter3DPlayer)pcritter).Mode = 'K';
+                else
+                    ((cCritter3DPlayer)pcritter).Mode = 'S';
+            }
             if (!_hopping && up)
                 pcritter.Velocity = pcritter.AttitudeTangent.mult(pcritter.MaxSpeed);
             if (!_hopping && down)
@@ -597,6 +606,7 @@ namespace ACFramework
                 pcritter.Velocity = pcritter.AttitudeTangent.mult(-pcritter.MaxSpeed);
                 inreverse = true;
             }
+
             if (!up && !down)
                 pcritter.Velocity = new cVector3(0.0f, 0.0f, 0.0f);
             //	Real inreversesign = inreverse?-1.0:1.0; 

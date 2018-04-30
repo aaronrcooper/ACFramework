@@ -5,9 +5,8 @@ using System.Windows.Forms;
 // mod: setRoom1 doesn't repeat over and over again
 
 namespace ACFramework
-{ 
-	
-	class cCritterDoor : cCritterWall 
+{
+    class cCritterDoor : cCritterWall 
 	{
 
 	    public cCritterDoor(cVector3 enda, cVector3 endb, float thickness, float height, cGame pownergame ) 
@@ -46,7 +45,7 @@ namespace ACFramework
 	{ 
         public cCritter3DPlayer( cGame pownergame ) 
             : base( pownergame ) 
-		{ 
+		{
 			BulletClass = new cCritter3DPlayerBullet( ); 
             Sprite = new cSpriteQuake(ModelsMD2.Goku); 
 			Sprite.SpriteAttitude = cMatrix3.scale( 2, 0.8f, 0.4f ); 
@@ -77,8 +76,9 @@ namespace ACFramework
         } 
 
         public override bool collide( cCritter pcritter ) 
-		{ 
-			bool playerhigherthancritter = Position.Y - Radius > pcritter.Position.Y; 
+		{
+            cGame3D cGameReference = new cGame3D();
+            bool playerhigherthancritter = Position.Y - Radius > pcritter.Position.Y; 
 		/* If you are "higher" than the pcritter, as in jumping on it, you get a point
 	and the critter dies.  If you are lower than it, you lose health and the
 	critter also dies. To be higher, let's say your low point has to higher
@@ -100,7 +100,8 @@ namespace ACFramework
            else      
                 Framework.snd.play(Sound.Shout);
             addScore(10);
-            pcritter.die(); 
+            pcritter.die();
+            cGameReference.dragonballCount--;
 			return true; 
 		}
 
@@ -353,7 +354,8 @@ namespace ACFramework
         private bool wentThrough = false;
         private float startNewRoom;
         private int roomNumber = 1;//keeps track of the room that the player is currently in
-        Random rnd = new Random();
+        private Random rnd = new Random();
+        public int dragonballCount;
 
 		public cGame3D() 
 		{
@@ -424,12 +426,6 @@ namespace ACFramework
             cSpriteTextureBox pNEWallSprite = new cSpriteTextureBox(pNEWall.Skeleton, BitmapRes.Wall3, 16);
             pNEWall.Sprite = pNEWallSprite;
             float y = -10;
-            for (int i = 0; i < 6; i++)
-            {
-                float x = rnd.Next(-20, 20);
-                float z = rnd.Next(-20, 20);
-                _pdragonball = new cCritterDragonball(this, x, y, z);
-            }
             cCritterDoor pdwall = new cCritterDoor( 
 				new cVector3( _border.Midx, _border.Loy, _border.Loz-0.9f ), 
 				new cVector3( _border.Midx, _border.Midy, _border.Loz-0.9f ), 
@@ -437,6 +433,13 @@ namespace ACFramework
 			cSpriteTextureBox pspritedoor = 
 				new cSpriteTextureBox( pdwall.Skeleton, BitmapRes.Door );
             pdwall.Sprite = pspritedoor;
+            for (int i = 0; i < 6; i++)
+            {
+                float x = rnd.Next(-20, 20);
+                float z = rnd.Next(-20, 20);
+                _pdragonball = new cCritterDragonball(this, x, y, z);
+                dragonballCount++;
+            }
         } 
 
         public void setRoom1( )
@@ -517,6 +520,7 @@ namespace ACFramework
                 float x = rnd.Next(-20, 20);
                 float z = rnd.Next(-20, 20);
                 _pdragonball = new cCritterDragonball(this, x, y, z);
+                dragonballCount++;
             }
         }
         public void setRoom2()

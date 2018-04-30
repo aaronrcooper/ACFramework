@@ -245,7 +245,6 @@ namespace ACFramework
     
 	class cCritterTreasure : cCritter 
 	{   // Try jumping through this hoop
-		
 		public cCritterTreasure( cGame pownergame ) : 
 		base( pownergame ) 
 		{ 
@@ -515,12 +514,15 @@ namespace ACFramework
             cSpriteTextureBox pUpstairsWallSprite = new cSpriteTextureBox(pUpstairsWall.Skeleton, BitmapRes.Wall3, 16);
             pUpstairsWall.Sprite = pUpstairsWallSprite;
             float y = -10;
-            for (int i = 0; i < 6; i++)
+            if (dragonballCount < 2)
             {
-                float x = rnd.Next(-20, 20);
-                float z = rnd.Next(-20, 20);
-                _pdragonball = new cCritterDragonball(this, x, y, z);
-                dragonballCount++;
+                for (int i = 0; i < 6; i++)
+                {
+                    float x = rnd.Next(-20, 20);
+                    float z = rnd.Next(-20, 20);
+                    _pdragonball = new cCritterDragonball(this, x, y, z);
+                    dragonballCount++;
+                }
             }
         }
         public void setRoom2()
@@ -567,11 +569,14 @@ namespace ACFramework
                 new cSpriteTextureBox(pdwall.Skeleton, BitmapRes.Door);
             pdwall.Sprite = pspritedoor;
             float y = -10;
-            for (int i = 0; i < 6; i++)
+            if (dragonballCount < 4)
             {
-                float x = rnd.Next(-20, 20);
-                float z = rnd.Next(-20, 20);
-                _pdragonball = new cCritterDragonball(this, x, y, z);
+                for (int i = 0; i < 6; i++)
+                {
+                    float x = rnd.Next(-20, 20);
+                    float z = rnd.Next(-20, 20);
+                    _pdragonball = new cCritterDragonball(this, x, y, z);
+                }
             }
         }
 
@@ -619,11 +624,14 @@ namespace ACFramework
                 new cSpriteTextureBox(pdwall.Skeleton, BitmapRes.Door);
             pdwall.Sprite = pspritedoor;
             float y = -10;
-            for (int i = 0; i < 6; i++)
+            if (dragonballCount < 2)
             {
-                float x = rnd.Next(-20, 20);
-                float z = rnd.Next(-20, 20);
-                _pdragonball = new cCritterDragonball(this, x, y, z);
+                for (int i = 0; i < 6; i++)
+                {
+                    float x = rnd.Next(-20, 20);
+                    float z = rnd.Next(-20, 20);
+                    _pdragonball = new cCritterDragonball(this, x, y, z);
+                }
             }
         }
         public void setRoom4()

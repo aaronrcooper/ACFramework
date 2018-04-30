@@ -260,7 +260,18 @@ namespace ACFramework
             Sprite.FillColor = Color.Crimson;
             // can use setSprite here too
             setRadius(0.1f);
-		} 
+		}
+        public override bool collide(cCritter pcritter)
+        {
+            if (pcritter.IsKindOf("cCritterWank"))
+            {
+                return true;
+            }
+            else
+            {
+                return base.collide(pcritter);
+            }
+       }
 
         public override bool IsKindOf( string str )
         {
@@ -441,20 +452,29 @@ namespace ACFramework
     }
     class cCritter3DCharacterEnemy : cCritterArmedRobot
     {
+        private const int begf = 155;
+        private const int endf = 160;
         public cCritter3DCharacterEnemy(cGame pownergame) 
             : base( pownergame ) 
         {
-            Sprite = new cSpriteQuake(ModelsMD2.Vegeta);
+            Sprite = new cSpriteQuake(ModelsMD2.Enemy);
+            Sprite.setstate(State.Other, begf, endf, StateType.Repeat);
             WrapFlag = cCritter.CLAMP;  //Prevents boss from going through walls
-            Armed = true;   //Allows the character to use bullets
-            MaxSpeed = cGame3D.MAXPLAYERSPEED;  //sets max speed
+            Armed = false;   //Allows the character to use bullets
+            MaxSpeed = cGame3D.MAXPLAYERSPEED - 15.0f;  //sets max speed
             AbsorberFlag = true;    //Keeps boss from being buffered out
             addForce(new cForceGravity(50.0f)); //gravity
             AttitudeToMotionLock = false;
+            Attitude = new cMatrix3(new cVector3(0.0f, 0.0f, 1.0f), new cVector3(1.0f, 0.0f, 0.0f),
+               new cVector3(0.0f, 1.0f, 0.0f), Position);
+            addForce(new cForceObjectSeek(Player, 3.0f));
+            AimToAttitudeLock = true;   //aims in the direction of the attitude
+            
         }
         public override void update(ACView pactiveview, float dt)
         {
             base.update(pactiveview, dt); //Always call this first
+            rotateAttitude(Tangent.rotationAngle(AttitudeTangent));
             if ((_outcode & cRealBox3.BOX_HIZ) != 0) /* use bitwise AND to check if a flag is set. */
                 delete_me(); //tell the game to remove yourself if you fall up to the hiz.
         }
@@ -513,6 +533,10 @@ namespace ACFramework
         public override bool collide(cCritter pother)
         {
             if(pother.IsKindOf("cCritter3DPlayer"))
+            {
+                return true;
+            }
+            else if (pother.IsKindOf("cCritter3DPlayerBullet"))
             {
                 return true;
             }
@@ -659,16 +683,18 @@ namespace ACFramework
 		public static readonly float MAXPLAYERSPEED = 30.0f;
         public static readonly float BORDER_XZ = 50.0f;//length and width of rooms
         public static readonly float BORDER_Y = 16.0f;//height of rooms
-		private cCritterTreasure _ptreasure; 
 		private bool doorcollision;
         private bool wentThrough = false;
         private float startNewRoom;
         private int roomNumber = 1;//keeps track of the room that the player is currently in
         private cCritterMovingWall movingWall;
         private bool shouldMoveWall;
+        private int numDragBallsCollected; //must collect all the dragonballs to win the game
+    
 
         public cGame3D() 
 		{
+            numDragBallsCollected = 0;
 			doorcollision = false;
 			_menuflags &= ~ cGame.MENU_BOUNCEWRAP; 
 			_menuflags |= cGame.MENU_HOPPER; //Turn on hopper listener option.
@@ -737,6 +763,9 @@ namespace ACFramework
 
             cCritterWank wank = new cCritterWank(this);
             wank.moveTo(new cVector3(_border.Hix - 4.0f, 0.0f, _border.Loz + 4.0f));
+
+            cCritter3DCharacterEnemy enemy_1 = new cCritter3DCharacterEnemy(this);
+            enemy_1.moveTo(new cVector3(_border.Hix - 3.0f, _border.Midy + 3.0f, _border.Loz + 10.0f));
             
         }
         
@@ -745,6 +774,8 @@ namespace ACFramework
         {
             Biota.purgeCritters("cCritterWall");
             Biota.purgeCritters("cCritter3Dcharacter");
+            Biota.purgeCritters("cCritterWank");
+            Biota.purgeCritters("cCritterGohan");
             setBorder(BORDER_XZ, BORDER_Y, BORDER_XZ);
             cRealBox3 skeleton = new cRealBox3();
             skeleton.copy( _border );
@@ -815,12 +846,15 @@ namespace ACFramework
             pUpstairsWall.Sprite = pUpstairsWallSprite;
             cCritter3DCharacterEnemy enemy = new cCritter3DCharacterEnemy(this);
             enemy.moveTo(new cVector3(0.0f, -4.0f, 0.0f));
-            enemy.setRadius(1.3f);
+            cCritter3DCharacterEnemy enemy2= new cCritter3DCharacterEnemy(this);
+            enemy2.moveTo(new cVector3(_border.Midx, _border.Loz + 4, _border.Hiy));
+
         }
         public void setRoom2()
         {
             Biota.purgeCritters("cCritterWall");
             Biota.purgeCritters("cCritter3Dcharacter");
+            Biota.purgeCritters("cCritter3DCharacterEnemy");
             setBorder(BORDER_XZ, BORDER_Y, BORDER_XZ);
             cRealBox3 skeleton = new cRealBox3();
             skeleton.copy(_border);
@@ -861,6 +895,12 @@ namespace ACFramework
                 new cSpriteTextureBox(movingWall.Skeleton, BitmapRes.Door);
             movingWall.Sprite = pspritedoor;
             shouldMoveWall = true;
+
+            //spawn two bosses in final room
+            cCritter3DBoss boss1 = new cCritter3DBoss(this);
+            boss1.moveTo(new cVector3(_border.Hiz - 3.0f, _border.Loy, _border.Hix - 3.0f));
+            cCritter3DBoss boss2 = new cCritter3DBoss(this);
+            boss2.moveTo(new cVector3(_border.Loz + 3.0f, _border.Loy, _border.Lox + 3.0f));
 
         }
 		public override void seedCritters() 

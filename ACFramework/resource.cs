@@ -354,13 +354,15 @@ namespace ACFramework
         public static readonly int Vegeta = 1;
         public static readonly int Wank = 2;
         public static readonly int Gohan = 3;
+        public static readonly int Enemy = 4;
 
         // at least one must be set true
         private static readonly ModelsMD2Info[] minfo = {
             new ModelsMD2Info( "goku", "goku.pcx", 0.3f, false ),
             new ModelsMD2Info( "vegeta", "vegeta.pcx", 0.2f, false ),
             new ModelsMD2Info( "wank", "black.pcx", 0.3f, false ),
-            new ModelsMD2Info("goku", "goku_armor.pcx", 0.3f, false)
+            new ModelsMD2Info("goku", "goku_armor.pcx", 0.3f, false),
+            new ModelsMD2Info("vegeta", "veggt.pcx", 0.4f, false)
         };            
 
         private static int[] randomCritters;

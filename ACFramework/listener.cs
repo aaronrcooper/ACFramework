@@ -347,15 +347,8 @@ namespace ACFramework
             bool pageup = Framework.Keydev[vk.PageUp];
             bool pagedown = Framework.Keydev[vk.PageDown];
             bool end = Framework.Keydev[vk.End];
-            bool K = Framework.Keydev[vk.K];
 
-            if (K)
-            {
-                if (((cCritter3DPlayer)pcritter).Mode != 'K')
-                    ((cCritter3DPlayer)pcritter).Mode = 'K';
-                else
-                    ((cCritter3DPlayer)pcritter).Mode = 'S';
-            }
+
             if (!_hopping && up)
                 pcritter.Velocity = pcritter.AttitudeTangent.mult(pcritter.MaxSpeed);
             if (!_hopping && down)
@@ -478,6 +471,21 @@ namespace ACFramework
             bool up = Framework.Keydev[vk.Up];
             bool down = Framework.Keydev[vk.Down];
             bool ctrl = Framework.Keydev[vk.C];
+            bool K = Framework.Keydev[vk.K];
+            if (K)
+            {
+                if (((cCritter3DPlayer)pcritter).Mode != 'K')
+                {
+                    ((cCritter3DPlayer)pcritter).Mode = 'K';
+                    return;
+                }
+                else if (((cCritter3DPlayer)pcritter).Mode == 'K')
+                {
+                    ((cCritter3DPlayer)pcritter).Mode = 'S';
+                    return;
+                }
+            }
+
             if (!_hopping && up)
             {
                 pcritter.Sprite.ModelState = State.Run;

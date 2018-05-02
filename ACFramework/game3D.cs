@@ -49,7 +49,6 @@ namespace ACFramework
             : base( pownergame ) 
 		{
             BulletClass = new cCritter3DPlayerBullet();
-            //BulletClass = new cCritterBullet( ); 
             Sprite = new cSpriteQuake(ModelsMD2.Goku); 
 			//Sprite.FillColor = Color.DarkGreen; 
 			Sprite.SpriteAttitude = cMatrix3.scale( 2, 0.8f, 0.4f ); 
@@ -115,18 +114,9 @@ namespace ACFramework
 
         public override cCritterBullet shoot()
         {
-            //if (Framework.Keydev.keystateage(vk.Space) > 2.0)
-            //{
-            //    cCritterBullet bullet = base.shoot();
-            //    //bullet.
-
-            ////}
-            //else
-            //{
                 Framework.snd.play(Sound.LaserFire);
                 return base.shoot();
-            //}
-    }
+        }
 
         public override bool IsKindOf( string str )
         {
@@ -162,8 +152,9 @@ namespace ACFramework
                 Sprite = new cSpriteSphere();
                 Sprite.FillColor = Color.Blue;
                 setRadius(0.4f);
+                HitStrength = 2;
             }
-            else
+            else if (((cCritter3DPlayer)pshooter).Mode == 'S')
             {
                 Sprite.FillColor = Color.Crimson;
                 // can use setSprite here too

@@ -131,8 +131,9 @@ namespace ACFramework
 	
 	class cCritter3DPlayer : cCritterArmedPlayer 
 	{ 
-        private cGame owner;
+        private cGame3D owner;
         private bool gohanSpawned;
+        public static int numDragBallsCollected;
         public cCritter3DPlayer( cGame pownergame ) 
             : base( pownergame ) 
 		{ 
@@ -148,7 +149,7 @@ namespace ACFramework
 			MaxSpeed =  cGame3D.MAXPLAYERSPEED + 20; 
 			AbsorberFlag = true; //Keeps player from being buffeted about.
 			ListenerAcceleration = 160.0f; //So Hopper can overcome gravity.  Only affects hop.
-            owner = pownergame;
+            owner = pownergame as cGame3D;
             // YHopper hop strength 12.0
 			Listener = new cListenerQuakeScooterYHopper( 0.2f, 15.0f );
             // the two arguments are walkspeed and hop strength -- JC
@@ -157,7 +158,8 @@ namespace ACFramework
 			Gravity	will affect player using cListenerHopper. */ 
 			AttitudeToMotionLock = false; //It looks nicer is you don't turn the player with motion.
 			Attitude = new cMatrix3( new cVector3(0.0f, 0.0f, -1.0f), new cVector3( -1.0f, 0.0f, 0.0f ), 
-                new cVector3( 0.0f, 1.0f, 0.0f ), Position); 
+                new cVector3( 0.0f, 1.0f, 0.0f ), Position);
+            numDragBallsCollected = 0;
 		}
 
         public override void update(ACView pactiveview, float dt)
@@ -212,6 +214,29 @@ namespace ACFramework
                 //play gohan sound
                 return true;
             }
+            else if(pcritter.IsKindOf("cCritterDragonball"))
+            {
+                int rand = (int)Framework.randomOb.random(3);
+                switch (rand)
+                {
+                    case 0:
+                        Framework.snd.play(Sound.Samurai);
+                        break;
+                    case 1:
+                        Framework.snd.play(Sound.Shout);
+                        break;
+                    case 2:
+                        Framework.snd.play(Sound.WorkHard);
+                        break;
+
+
+                }
+                addScore(100);
+                addHealth(5);
+                numDragBallsCollected++;
+                pcritter.die();
+                return true;
+            }
             else
             { 
 				damage( 1 );
@@ -240,10 +265,11 @@ namespace ACFramework
                 return "cCritter3DPlayer";
             }
         }
-	} 
-	
-   
-	class cCritter3DPlayerBullet : cCritterBullet 
+	}
+
+    
+
+    class cCritter3DPlayerBullet : cCritterBullet 
 	{
 
         public cCritter3DPlayerBullet() { }
@@ -263,9 +289,9 @@ namespace ACFramework
 		}
         public override bool collide(cCritter pcritter)
         {
-            if (pcritter.IsKindOf("cCritterWank"))
+            if (pcritter.IsKindOf("cCritterWank") || pcritter.IsKindOf("cCritterDragonball"))
             {
-                return true;
+                return false;
             }
             else
             {
@@ -671,11 +697,50 @@ namespace ACFramework
                 return "cCritterTreasure";
             }
         }
-	} 
-	
-	//======================cGame3D========================== 
-	
-	class cGame3D : cGame 
+	}
+
+    class cCritterDragonball : cCritter
+    {
+        //hold a reference to the game
+        private cGame3D _game;
+        // Try jumping through this hoop
+        public cCritterDragonball(cGame pownergame) :
+        base(pownergame)
+        {
+            _game = pownergame as cGame3D;
+            /* The sprites look nice from afar, but bitmap speed is really slow
+		when you get close to them, so don't use this. */
+            cSpriteSphere sphere = new cSpriteSphere(20, 16, 16);
+            sphere.FillColor = Color.Orange;
+            sphere.Filled = true;
+            sphere.LineWidthWeight = 0.5f;
+            Sprite = sphere;
+            //rotate(new cSpin((float)Math.PI / 2.0f, new cVector3(0.0f, 0.0f, 1.0f))); 
+            setRadius(0.5f);
+            this.clearForcelist();
+            addForce(new cForceDrag(100.0f));
+        }
+
+        /* Only collide
+			with cCritter3DPlayer. */
+
+        public override bool IsKindOf(string str)
+        {
+            return str == "cCritterDragonball" || base.IsKindOf(str);
+        }
+
+        public override string RuntimeClass
+        {
+            get
+            {
+                return "cCritterDragonball";
+            }
+        }
+    }
+
+    //======================cGame3D========================== 
+
+    class cGame3D : cGame 
 	{ 
 		public static readonly float TREASURERADIUS = 1.2f; 
 		public static readonly float WALLTHICKNESS = 0.5f; 
@@ -689,12 +754,10 @@ namespace ACFramework
         private int roomNumber = 1;//keeps track of the room that the player is currently in
         private cCritterMovingWall movingWall;
         private bool shouldMoveWall;
-        private int numDragBallsCollected; //must collect all the dragonballs to win the game
     
 
         public cGame3D() 
 		{
-            numDragBallsCollected = 0;
 			doorcollision = false;
 			_menuflags &= ~ cGame.MENU_BOUNCEWRAP; 
 			_menuflags |= cGame.MENU_HOPPER; //Turn on hopper listener option.
@@ -766,7 +829,13 @@ namespace ACFramework
 
             cCritter3DCharacterEnemy enemy_1 = new cCritter3DCharacterEnemy(this);
             enemy_1.moveTo(new cVector3(_border.Hix - 3.0f, _border.Midy + 3.0f, _border.Loz + 10.0f));
-            
+
+            cCritterDragonball dball1 = new cCritterDragonball(this);
+            dball1.moveTo(new cVector3(_border.Midx, Border.Loy, _border.Midz));
+
+            cCritterDragonball dball2 = new cCritterDragonball(this);
+            dball2.moveTo(new cVector3(_border.Hix - 6, Border.Loy, _border.Loz + 6));
+
         }
         
 
@@ -849,6 +918,17 @@ namespace ACFramework
             cCritter3DCharacterEnemy enemy2= new cCritter3DCharacterEnemy(this);
             enemy2.moveTo(new cVector3(_border.Midx, _border.Loz + 4, _border.Hiy));
 
+
+            //Insert dragonballs
+            cCritterDragonball dball3 = new cCritterDragonball(this);
+            dball3.moveTo(new cVector3(_border.Midx, Border.Loy, _border.Midz));
+
+            cCritterDragonball dball4 = new cCritterDragonball(this);
+            dball4.moveTo(new cVector3(_border.Midx, Border.Midy + 3, _border.Loz + 4));
+
+            cCritterDragonball dball5 = new cCritterDragonball(this);
+            dball5.moveTo(new cVector3(_border.Hix - 2, Border.Loy, _border.Midz - 2));
+
         }
         public void setRoom2()
         {
@@ -901,6 +981,12 @@ namespace ACFramework
             boss1.moveTo(new cVector3(_border.Hiz - 3.0f, _border.Loy, _border.Hix - 3.0f));
             cCritter3DBoss boss2 = new cCritter3DBoss(this);
             boss2.moveTo(new cVector3(_border.Loz + 3.0f, _border.Loy, _border.Lox + 3.0f));
+
+            cCritterDragonball dball6 = new cCritterDragonball(this);
+            dball6.moveTo(new cVector3(_border.Lox, Border.Loy, _border.Hiz-3.0f));
+
+            cCritterDragonball dball7 = new cCritterDragonball(this);
+            dball7.moveTo(new cVector3(_border.Hix - 2, Border.Loy, _border.Loz + 2));
 
         }
 		public override void seedCritters() 
@@ -968,6 +1054,11 @@ namespace ACFramework
                 Framework.snd.play(Sound.Hallelujah);
                 return ; 
 			} 
+
+            if(cCritter3DPlayer.numDragBallsCollected >= 7)
+            {
+                MessageBox.Show("You have won the game");
+            }
 		// (2) Also don't let the the model count diminish.
 					//(need to recheck propcount in case we just called seedCritters).
 			int modelcount = Biota.count( "cCritter3Dcharacter" ); 
@@ -983,19 +1074,24 @@ namespace ACFramework
 
             if (doorcollision == true)
             {
-                if (roomNumber == 1)
+                if (roomNumber == 1 && cCritter3DPlayer.numDragBallsCollected >=2)
                 {
                     setRoom1();
                     roomNumber = 2;
                 }
-                else if (roomNumber == 2)
+                else if (roomNumber == 2 && cCritter3DPlayer.numDragBallsCollected >=5)
                 {
                     setRoom2();
                     shouldMoveWall = true;
                 }
+                else if (roomNumber == 3 && cCritter3DPlayer.numDragBallsCollected >=7)
+                {
+                    MessageBox.Show("You won the game!");
+                }
                 else
                 {
                     MessageBox.Show("This door seems to be locked.");
+                    Player.moveTo(Player.Position.sub(new cVector3(2.0f, 2.0f, 2.0f)));
                 }
            
                 doorcollision = false;

@@ -3,3 +3,6 @@
 *.pdb
 
 .vs/ACFramework/v15/sqlite3/storage.ide
+*.lock
+.vs/ACFramework/v15/Server/sqlite3/storage.ide-shm
+.vs/ACFramework/v15/Server/sqlite3/storage.ide-wal

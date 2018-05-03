@@ -259,6 +259,12 @@ namespace ACFramework
             return str == "cCritter3DPlayer" || base.IsKindOf( str );
         }
 		
+        public int NumDragonBallsCollected
+        {
+            get { return numDragBallsCollected; }
+            set { numDragBallsCollected = value; }
+        }
+
         public override string RuntimeClass
         {
             get
@@ -1105,11 +1111,14 @@ namespace ACFramework
 
             if(cCritter3DPlayer.numDragBallsCollected >= 7)
             {
-                MessageBox.Show("You have won the game");
+                _gameover = true;
+                Application.Exit();
+                MessageBox.Show("You have won the game!!");
+                return;
             }
-		// (2) Also don't let the the model count diminish.
-					//(need to recheck propcount in case we just called seedCritters).
-			int modelcount = Biota.count( "cCritter3Dcharacter" ); 
+            // (2) Also don't let the the model count diminish.
+            //(need to recheck propcount in case we just called seedCritters).
+            int modelcount = Biota.count( "cCritter3Dcharacter" ); 
 			int modelstoadd = _seedcount - modelcount; 
 			for ( int i = 0; i < modelstoadd; i++) 
 				new cCritter3Dcharacter( this ); 
@@ -1132,10 +1141,10 @@ namespace ACFramework
                     setRoom2();
                     shouldMoveWall = true;
                 }
-                else if (roomNumber == 3 && cCritter3DPlayer.numDragBallsCollected >=7)
-                {
-                    MessageBox.Show("You won the game!");
-                }
+                //else if (roomNumber == 3 && cCritter3DPlayer.numDragBallsCollected >=7)
+                //{
+                //    MessageBox.Show("You won the game!");
+                //}
                 else
                 {
                     MessageBox.Show("This door seems to be locked.");

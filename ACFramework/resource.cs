@@ -291,6 +291,7 @@ namespace ACFramework
         public static readonly int D = 17;
         public static readonly int C = 18;
         public static readonly int K = 19;
+        public static readonly int Cheat_Z = 20;
 
         public static Key[] key;
 
@@ -315,7 +316,8 @@ namespace ACFramework
                 Key.I,
                 Key.D,
                 Key.C,
-                Key.K
+                Key.K,
+                Key.Z
             };
 
         }

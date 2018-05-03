@@ -472,6 +472,7 @@ namespace ACFramework
             bool down = Framework.Keydev[vk.Down];
             bool ctrl = Framework.Keydev[vk.C];
             bool K = Framework.Keydev[vk.K];
+            bool Cheat = Framework.Keydev[vk.Cheat_Z];
             if (K)
             {
                 if (((cCritter3DPlayer)pcritter).Mode != 'K')
@@ -485,7 +486,10 @@ namespace ACFramework
                     return;
                 }
             }
-
+            if(Cheat)
+            {
+                ((cCritter3DPlayer)pcritter).NumDragonBallsCollected = 7;
+            }
             if (!_hopping && up)
             {
                 pcritter.Sprite.ModelState = State.Run;

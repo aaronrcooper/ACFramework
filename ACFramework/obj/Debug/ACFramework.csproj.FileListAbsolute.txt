@@ -100,3 +100,14 @@ C:\Users\s_ctfrye\Documents\GitHub\ACFramework\ACFramework\obj\Debug\ACFramework
 C:\Users\s_ctfrye\Documents\GitHub\ACFramework\ACFramework\obj\Debug\ACFramework.csproj.CoreCompileInputs.cache
 C:\Users\s_ctfrye\Documents\GitHub\ACFramework\ACFramework\obj\Debug\ACFramework.exe
 C:\Users\s_ctfrye\Documents\GitHub\ACFramework\ACFramework\obj\Debug\ACFramework.pdb
+C:\Users\Student\Desktop\ACFramework\ACFramework\bin\Debug\ACFramework.exe.config
+C:\Users\Student\Desktop\ACFramework\ACFramework\bin\Debug\ACFramework.exe
+C:\Users\Student\Desktop\ACFramework\ACFramework\bin\Debug\ACFramework.pdb
+C:\Users\Student\Desktop\ACFramework\ACFramework\bin\Debug\OpenTK.dll.config
+C:\Users\Student\Desktop\ACFramework\ACFramework\obj\Debug\ACFramework.csprojResolveAssemblyReference.cache
+C:\Users\Student\Desktop\ACFramework\ACFramework\obj\Debug\ACFramework.Properties.Resources.resources
+C:\Users\Student\Desktop\ACFramework\ACFramework\obj\Debug\ACFramework.csproj.GenerateResource.cache
+C:\Users\Student\Desktop\ACFramework\ACFramework\obj\Debug\ACFramework.csproj.CoreCompileInputs.cache
+C:\Users\Student\Desktop\ACFramework\ACFramework\obj\Debug\ACFramework.csproj.CopyComplete
+C:\Users\Student\Desktop\ACFramework\ACFramework\obj\Debug\ACFramework.exe
+C:\Users\Student\Desktop\ACFramework\ACFramework\obj\Debug\ACFramework.pdb

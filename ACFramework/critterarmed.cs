@@ -210,6 +210,17 @@ namespace ACFramework
 				{ return _pshooter; }
 		}
 
+        public virtual int HitStrength
+        {
+            set
+            {
+                _hitstrength = value;   
+            }
+            get
+            {
+                return _hitstrength;
+            }
+        }
         /// <summary>
         /// Gets the name of this class as a string -- useful for polymorphism
         /// </summary>
@@ -224,32 +235,38 @@ namespace ACFramework
 
     } 
 
-    class cCritterBulletKamehameha : cCritterBullet
-    {
-        public cCritterBulletKamehameha()
-        {
-            _shooterindex = cBiota.NOINDEX;
-            _hitstrength = 2;
-            _dieatedges = true;
-            _defaultprismdz = cSprite.BULLETPRISMDZ;
-            _value = 0;
-            _usefixedlifetime = true;
-            _fixedlifetime = FIXEDLIFETIME;
-            _collidepriority = cCollider.CP_BULLET; /* Don't use the setCollidePriority mutator, as that
-			forces a call to pgame()->buildCollider(); */
-            _maxspeed = cCritterBullet.MAXSPEED;
-            Speed = cCritterBullet.BULLETSPEED;
-            cSpriteSphere bulletsprite = new cSpriteSphere(cCritter.BULLETRADIUS * 2, 6, 6);
-            bulletsprite.FillColor = Color.Aqua;
-            Sprite = bulletsprite; /* Also sets cSprite._prismdz to cCritter._defaultprismdz, which we
-			set to CritterWall.BULLETPRISMDZ above. */
-        }
+   // class cCritterBulletKamehameha : cCritterBullet
+   // {
+   //     public cCritterBulletKamehameha()
+   //     {
+   //         _shooterindex = cBiota.NOINDEX;
+   //         _hitstrength = 2;
+   //         _dieatedges = true;
+   //         _defaultprismdz = cSprite.BULLETPRISMDZ;
+   //         _value = 0;
+   //         _usefixedlifetime = true;
+   //         _fixedlifetime = FIXEDLIFETIME;
+   //         _collidepriority = cCollider.CP_BULLET; /* Don't use the setCollidePriority mutator, as that
+			//forces a call to pgame()->buildCollider(); */
+   //         _maxspeed = cCritterBullet.MAXSPEED;
+   //         Speed = cCritterBullet.BULLETSPEED;
+   //         cSpriteSphere bulletsprite = new cSpriteSphere(cCritter.BULLETRADIUS * 2, 6, 6);
+   //         bulletsprite.FillColor = Color.Aqua;
+   //         Sprite = bulletsprite; /* Also sets cSprite._prismdz to cCritter._defaultprismdz, which we
+			//set to CritterWall.BULLETPRISMDZ above. */
+   //     }
 
-        public bool isKindOf(string str)
-        {
-            return str == "cCritterBulletKamehameha" || base.IsKindOf(str);
-        }
-    }
+   //     public bool isKindOf(string str)
+   //     {
+   //         return str == "cCritterBulletKamehameha" || base.IsKindOf(str);
+   //     }
+
+   //     public override int HitStrength
+   //     {
+   //         get { return _hitstrength; }
+   //         set { _hitstrength = value;  }
+   //     }
+   // }
 	
 	class cCritterBulletRubber : cCritterBullet 
 	{ 
@@ -493,7 +510,8 @@ namespace ACFramework
 		protected bool _armed; //Use this to turn the gun on or off.
 		protected float _ageshoot; //Age at last shot, so you wait a bit between shots 
 		protected float _waitshoot; //Time to wait between shots.
-		protected float _gunlength; 
+		protected float _gunlength;
+        //protected bool kamehameha = false; 
 		protected cVector3 _aimvector; 
 		protected bool _bshooting; 
 		protected bool _aimtoattitudelock; //FALSE means aim any old way, TRUE means match aim to attitude tangent 
@@ -614,7 +632,13 @@ namespace ACFramework
                     break;
                 }
             } while (_bulletlist.GetNext(out cb));
-		} 
+		}
+        
+        //public bool IsKamehameha
+        //{
+        //    set { kamehameha = value; }
+        //    get { return kamehameha; }
+        //} 
 
 		
 	//Overloads 
@@ -679,9 +703,14 @@ namespace ACFramework
         /// <returns></returns>
 		public virtual cCritterBullet shoot() 
 		{ 
-            cCritterBullet pbullet = _pbulletclass.Create(); 
-			pbullet.initialize( this ); 
-			pbullet.Sprite.LineColor = Sprite.LineColor;
+            cCritterBullet pbullet = _pbulletclass.Create();
+            pbullet.initialize( this );
+            //if (pbullet.Shooter.IsKamehameha && !pbullet.Shooter.IsKindOf("cCritterArmedRobot"))
+            //{
+            //    pbullet = new cCritterBulletKamehameha();
+            //    pbullet.HitStrength = 2;
+            //}
+            pbullet.Sprite.LineColor = Sprite.LineColor;
 			pbullet.add_me( _pownerbiota ); /* Makes a servicerequest to be handled by cBiota later. I used to
 				have _pownerbiota.Add(pbullet) here, but this makes a problem if I do
 				USEMETRIC; this is because _metric expects the critter's indices to stay fixed.
@@ -988,6 +1017,17 @@ namespace ACFramework
 			_speed = 0; 
 		} 
 
+        //public bool IsKamehameha
+        //{
+        //    set
+        //    {
+        //        kamehameha = value;
+        //    }
+        //    get
+        //    {
+        //        return kamehameha;
+        //    }
+        //}
 		
 	//Accessors 
 		
@@ -996,9 +1036,8 @@ namespace ACFramework
 		public override void feellistener( float dt ) 
 		{ 
 			base.feellistener( dt );  // will call cCritter feellistener
-            //if (cKeyInfo.keystateage(Framework.Keydev[vk.Space]))
             if (!shotDone) // if space key or left mouse button is pressed, turn off shooting until not pressed
-                _bshooting = false; 
+                _bshooting = false;
             if (shotDone && ( Framework.Keydev[vk.Space] || Framework.Leftclick )) 
             { // if previous shot is done, turn on shooting when space key or left mouse button is pressed
                 _bshooting = true;

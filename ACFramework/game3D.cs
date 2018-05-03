@@ -134,10 +134,11 @@ namespace ACFramework
         private cGame3D owner;
         private bool gohanSpawned;
         public static int numDragBallsCollected;
+        public char Mode;
         public cCritter3DPlayer( cGame pownergame ) 
             : base( pownergame ) 
-		{ 
-			BulletClass = new cCritter3DPlayerBullet( ); 
+		{
+            BulletClass = new cCritter3DPlayerBullet();
             Sprite = new cSpriteQuake(ModelsMD2.Goku); 
 			//Sprite.FillColor = Color.DarkGreen; 
 			Sprite.SpriteAttitude = cMatrix3.scale( 2, 0.8f, 0.4f ); 
@@ -249,8 +250,8 @@ namespace ACFramework
 
         public override cCritterBullet shoot()
         {
-            Framework.snd.play(Sound.LaserFire);
-            return base.shoot();
+                Framework.snd.play(Sound.LaserFire);
+                return base.shoot();
         }
 
         public override bool IsKindOf( string str )
@@ -283,9 +284,19 @@ namespace ACFramework
 		public override void initialize( cCritterArmed pshooter ) 
 		{ 
 			base.initialize( pshooter );
-            Sprite.FillColor = Color.Crimson;
-            // can use setSprite here too
-            setRadius(0.1f);
+            if (((cCritter3DPlayer) pshooter).Mode == 'K')
+            {
+                Sprite = new cSpriteSphere();
+                Sprite.FillColor = Color.Blue;
+                setRadius(0.4f);
+                HitStrength = 2;
+            }
+            else if (((cCritter3DPlayer)pshooter).Mode == 'S')
+            {
+                Sprite.FillColor = Color.Crimson;
+                // can use setSprite here too
+                setRadius(0.1f);
+            }
 		}
         public override bool collide(cCritter pcritter)
         {
@@ -311,9 +322,42 @@ namespace ACFramework
                 return "cCritter3DPlayerBullet";
             }
         }
-	} 
-	
-	class cCritter3Dcharacter : cCritter  
+	}
+
+    class cCritterBulletKamehameha : cCritterBulletSilver
+    {
+        public cCritterBulletKamehameha()
+        {
+            _shooterindex = cBiota.NOINDEX;
+            _hitstrength = 2;
+            _dieatedges = true;
+            _defaultprismdz = cSprite.BULLETPRISMDZ;
+            _value = 0;
+            _usefixedlifetime = true;
+            _fixedlifetime = FIXEDLIFETIME;
+            _collidepriority = cCollider.CP_BULLET; /* Don't use the setCollidePriority mutator, as that
+			forces a call to pgame()->buildCollider(); */
+            _maxspeed = cCritterBullet.MAXSPEED;
+            Speed = cCritterBullet.BULLETSPEED;
+            cSpriteSphere bulletsprite = new cSpriteSphere(cCritter.BULLETRADIUS * 2, 6, 6);
+            bulletsprite.FillColor = Color.Aqua;
+            Sprite = bulletsprite; /* Also sets cSprite._prismdz to cCritter._defaultprismdz, which we
+			set to CritterWall.BULLETPRISMDZ above. */
+        }
+
+        public bool isKindOf(string str)
+        {
+            return str == "cCritterBulletKamehameha" || base.IsKindOf(str);
+        }
+
+        public override int HitStrength
+        {
+            get { return _hitstrength; }
+            set { _hitstrength = value; }
+        }
+    }
+
+    class cCritter3Dcharacter : cCritter  
 	{ 
 		
         public cCritter3Dcharacter( cGame pownergame ) 
@@ -453,6 +497,10 @@ namespace ACFramework
         }
         public override void update(ACView pactiveview, float dt)
         {
+            if(Health < 5)
+            {
+                BulletClass = new cCritterBulletKamehameha();
+            }
             base.update(pactiveview, dt); //Always call this first
             rotateAttitude(Tangent.rotationAngle(AttitudeTangent));
             _waitshoot = (float)rand.NextDouble();
